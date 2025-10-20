@@ -21,7 +21,7 @@ export const initializeAwsSdkClient = (apiKey: string, region: string) => {
   authHelper = withAPIKey(apiKey, region);
   return new GeoPlacesClient({
     ...authHelper.getClientConfig(),
-    customUserAgent: 'aws-geo-client-src/1.0+AddressForm'
+    customUserAgent: "aws-geo-client-src/1.0+AddressForm",
   });
 };
 

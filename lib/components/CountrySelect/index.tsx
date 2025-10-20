@@ -23,7 +23,7 @@ interface MultiCountrySelectProps extends BaseCountrySelectProps {
   onChange: (value: string[]) => void;
 }
 
-export type CountrySelectProps = (SingleCountrySelectProps | MultiCountrySelectProps) & 
+export type CountrySelectProps = (SingleCountrySelectProps | MultiCountrySelectProps) &
   Omit<InputProps, "value" | "onChange" | "id">;
 
 export const CountrySelect = ({

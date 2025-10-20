@@ -1,6 +1,6 @@
 /**
  * Integration test file for API functionality that requires real AWS SDK clients.
- * 
+ *
  * This file is separate from api.test.ts because:
  * 1. api.test.ts has extensive mocking of @aws-sdk/client-geo-places and @aws/amazon-location-utilities-auth-helper
  * 2. Testing custom user agent headers requires real AWS SDK client instances with actual middleware stacks
@@ -21,13 +21,13 @@ describe("GeoPlaces client's requests should have aws-geo-client-src custom tag 
   const testCustomUserAgent = async (apiCall: (client: GeoPlacesClient) => Promise<unknown>) => {
     const client = initializeAwsSdkClient(mockApiKey, mockRegion);
     let capturedRequest: unknown = null;
-    
+
     client.middlewareStack.add(
       () => async (args: { request: unknown }) => {
         capturedRequest = args.request;
         throw new Error("Request captured");
       },
-      { step: "finalizeRequest", name: "captureRequest", priority: "high" }
+      { step: "finalizeRequest", name: "captureRequest", priority: "high" },
     );
 
     try {
@@ -37,7 +37,9 @@ describe("GeoPlaces client's requests should have aws-geo-client-src custom tag 
     }
 
     expect(capturedRequest).toBeDefined();
-    expect((capturedRequest as { headers: Record<string, string> }).headers['x-amz-user-agent']).toContain('aws-geo-client-src/1.0+AddressForm');
+    expect((capturedRequest as { headers: Record<string, string> }).headers["x-amz-user-agent"]).toContain(
+      "aws-geo-client-src/1.0+AddressForm",
+    );
   };
 
   it("should send autocomplete request with custom user agent", async () => {
