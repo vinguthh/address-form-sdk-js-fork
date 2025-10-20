@@ -207,7 +207,7 @@ export function AddressForm({
                     data-testid={config.id}
                     {...register(config.name)}
                     placeholder={config.placeholder}
-                    value={formState[config.name]}
+                    value={formState[config.name] ?? ""}
                   />
                 )}
               </FormField>

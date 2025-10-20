@@ -1,10 +1,11 @@
-export { AddressForm, AddressFormMap, defaultAddressFormFields } from "./components/AddressForm";
+export { AddressForm, AddressFormMap } from "./components/AddressForm";
+export { defaultAddressFormFields } from "./components/AddressForm/form-field";
+export type { FormFieldID } from "./components/AddressForm/form-field";
 export { CountrySelect } from "./components/CountrySelect";
 export type { CountrySelectProps } from "./components/CountrySelect";
 export type {
   AddressFormProps,
   AddressFormMapProps,
-  FormFieldID,
   AddressFormField,
   AddressFormData,
 } from "./components/AddressForm";
