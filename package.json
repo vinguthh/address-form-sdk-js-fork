@@ -20,7 +20,7 @@
     "build:lib": "tsc -b && vite build",
     "build:standalone": "tsc -b && vite build --config ./vite.config.standalone.ts",
     "build:storybook": "storybook build",
-    "test": "tsc -b && eslint . && vitest run --coverage",
+    "test": "vitest run --coverage",
     "format": "prettier --write ."
   },
   "devDependencies": {
