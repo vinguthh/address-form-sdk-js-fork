@@ -28,13 +28,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
           cache-dependency-path: "./package-lock.json"
-      - name: Install dependencies
+      - name: Install
         run: npm ci
       - name: Lint
         run: npm run lint
-      - name: Prettier code style check
-        run: npm run prettier:check
-      - name: Unit test
+      - name: Test
         run: npm run test
       - name: Build
         run: npm run build
