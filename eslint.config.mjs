@@ -22,4 +22,10 @@ export default tseslint.config(
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     },
   },
+  {
+    files: ["lib/main.tsx", "lib/main-standalone.tsx"],
+    rules: {
+      "react-refresh/only-export-components": "off",
+    },
+  },
 );
