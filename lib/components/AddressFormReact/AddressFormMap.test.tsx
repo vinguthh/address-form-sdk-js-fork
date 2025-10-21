@@ -4,8 +4,8 @@ import { AddressFormMap } from "./AddressFormMap";
 import { AddressFormContext, AddressFormContextType } from "./AddressFormContext";
 
 vi.mock("../Map", () => ({
-  Map: vi.fn(({ children, ...props }) => (
-    <div data-testid="mock-map" data-map-style={props.mapStyle?.toString()} {...props}>
+  Map: vi.fn(({ children, mapStyle, ...props }) => (
+    <div data-testid="mock-map" data-map-style={mapStyle?.toString()} {...props}>
       {children}
     </div>
   )),

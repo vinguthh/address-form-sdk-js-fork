@@ -4,7 +4,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProvider } from "../../test/utils";
 import { MapProps } from "../Map";
 import { TypeaheadProps } from "../Typeahead";
-import { AddressForm, AddressFormData, AddressFormProps, defaultAddressFormFields } from "./index";
+import { AddressForm, AddressFormData, AddressFormProps } from "./index";
+import { defaultAddressFormFields } from "./form-field";
 
 vi.mock("../Map", () => ({
   Map: ({ children }: MapProps) => <div data-testid="map">{children}</div>,
