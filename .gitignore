@@ -24,6 +24,8 @@ dist-ssr
 *.sln
 *.sw?
 
+*storybook.log
+
 .env
 .env.local
 stats.html

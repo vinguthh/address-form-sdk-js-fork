@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as api from "../../utils/api";
 import { queryClient } from "../../utils/query-client";
 import { AmazonLocationProvider } from "../AmazonLocationProvider";
-import { TypeaheadSource, useTypeaheadQuery } from "./use-typeahead-query";
+import { TypeaheadAPIName, useTypeaheadQuery } from "./use-typeahead-query";
 
 // Mock the API functions
 vi.mock("../../utils/api", () => ({
@@ -32,7 +32,7 @@ describe("useTypeaheadQuery", () => {
   });
 
   describe("autocomplete api", () => {
-    it("should call autocomplete api with default querytext when source is autocomplete", async () => {
+    it("should call autocomplete api with default querytext when api is autocomplete", async () => {
       const mockResponse: AutocompleteCommandOutput = {
         ResultItems: [
           {
@@ -51,8 +51,8 @@ describe("useTypeaheadQuery", () => {
         () =>
           useTypeaheadQuery({
             client: mockClient,
-            source: "autocomplete",
-            sourceInput: { QueryText: "123" },
+            apiName: "autocomplete",
+            apiInput: { QueryText: "123" },
             enabled: true,
           }),
         { wrapper: createWrapper(mockClient) },
@@ -85,8 +85,8 @@ describe("useTypeaheadQuery", () => {
         () =>
           useTypeaheadQuery({
             client: mockClient,
-            source: "autocomplete",
-            sourceInput: { QueryText: "test", MaxResults: 3 },
+            apiName: "autocomplete",
+            apiInput: { QueryText: "test", MaxResults: 3 },
             enabled: true,
           }),
         {
@@ -136,7 +136,7 @@ describe("useTypeaheadQuery", () => {
       vi.mocked(api.autocomplete).mockResolvedValue(mockResponse);
 
       const { result } = renderHook(
-        () => useTypeaheadQuery({ client: mockClient, source: "autocomplete", enabled: true }),
+        () => useTypeaheadQuery({ client: mockClient, apiName: "autocomplete", enabled: true }),
         { wrapper: createWrapper(mockClient) },
       );
 
@@ -159,7 +159,7 @@ describe("useTypeaheadQuery", () => {
       vi.mocked(api.autocomplete).mockResolvedValue(mockResponse);
 
       const { result } = renderHook(
-        () => useTypeaheadQuery({ client: mockClient, source: "autocomplete", enabled: true }),
+        () => useTypeaheadQuery({ client: mockClient, apiName: "autocomplete", enabled: true }),
         { wrapper: createWrapper(mockClient) },
       );
 
@@ -172,7 +172,7 @@ describe("useTypeaheadQuery", () => {
   });
 
   describe("suggest api", () => {
-    it("should call suggest api with default querytext and biasposition when source is suggest", async () => {
+    it("should call suggest api with default querytext and biasposition when api is suggest", async () => {
       const mockResponse: SuggestCommandOutput = {
         ResultItems: [
           {
@@ -190,8 +190,8 @@ describe("useTypeaheadQuery", () => {
         () =>
           useTypeaheadQuery({
             client: mockClient,
-            source: "suggest",
-            sourceInput: { QueryText: "rest" },
+            apiName: "suggest",
+            apiInput: { QueryText: "rest" },
             enabled: true,
           }),
         { wrapper: createWrapper(mockClient) },
@@ -223,8 +223,8 @@ describe("useTypeaheadQuery", () => {
         () =>
           useTypeaheadQuery({
             client: mockClient,
-            source: "suggest",
-            sourceInput: {
+            apiName: "suggest",
+            apiInput: {
               QueryText: "hotel",
               BiasPosition: [40.7128, -74.006],
               MaxResults: 10,
@@ -277,9 +277,12 @@ describe("useTypeaheadQuery", () => {
       };
       vi.mocked(api.suggest).mockResolvedValue(mockResponse);
 
-      const { result } = renderHook(() => useTypeaheadQuery({ client: mockClient, source: "suggest", enabled: true }), {
-        wrapper: createWrapper(mockClient),
-      });
+      const { result } = renderHook(
+        () => useTypeaheadQuery({ client: mockClient, apiName: "suggest", enabled: true }),
+        {
+          wrapper: createWrapper(mockClient),
+        },
+      );
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
@@ -299,9 +302,12 @@ describe("useTypeaheadQuery", () => {
       };
       vi.mocked(api.suggest).mockResolvedValue(mockResponse);
 
-      const { result } = renderHook(() => useTypeaheadQuery({ client: mockClient, source: "suggest", enabled: true }), {
-        wrapper: createWrapper(mockClient),
-      });
+      const { result } = renderHook(
+        () => useTypeaheadQuery({ client: mockClient, apiName: "suggest", enabled: true }),
+        {
+          wrapper: createWrapper(mockClient),
+        },
+      );
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
@@ -313,7 +319,7 @@ describe("useTypeaheadQuery", () => {
 
   describe("query behavior", () => {
     it("should not execute query when enabled is false", () => {
-      renderHook(() => useTypeaheadQuery({ client: mockClient, source: "autocomplete", enabled: false }), {
+      renderHook(() => useTypeaheadQuery({ client: mockClient, apiName: "autocomplete", enabled: false }), {
         wrapper: createWrapper(mockClient),
       });
 
@@ -325,8 +331,8 @@ describe("useTypeaheadQuery", () => {
         () =>
           useTypeaheadQuery({
             client: mockClient,
-            source: "autocomplete",
-            sourceInput: { QueryText: "test" },
+            apiName: "autocomplete",
+            apiInput: { QueryText: "test" },
             enabled: true,
           }),
         { wrapper: createWrapper(mockClient) },
@@ -344,7 +350,7 @@ describe("useTypeaheadQuery", () => {
       queryClient.setDefaultOptions({ queries: { retry: false } });
 
       const { result } = renderHook(
-        () => useTypeaheadQuery({ client: mockClient, source: "autocomplete", enabled: true }),
+        () => useTypeaheadQuery({ client: mockClient, apiName: "autocomplete", enabled: true }),
         { wrapper: createWrapper(mockClient) },
       );
 
@@ -363,7 +369,7 @@ describe("useTypeaheadQuery", () => {
       queryClient.setDefaultOptions({ queries: { retry: false } });
 
       const { result } = renderHook(
-        () => useTypeaheadQuery({ client: mockClient, source: "invalid-api" as TypeaheadSource, enabled: true }),
+        () => useTypeaheadQuery({ client: mockClient, apiName: "invalid-api" as TypeaheadAPIName, enabled: true }),
         { wrapper: createWrapper(mockClient) },
       );
 
@@ -372,7 +378,7 @@ describe("useTypeaheadQuery", () => {
       });
 
       expect(result.current.error).toBeInstanceOf(Error);
-      expect((result.current.error as Error).message).toContain("Invalid value for typeahead source");
+      expect((result.current.error as Error).message).toContain("Invalid value for typeahead api name");
 
       // Restore default options
       queryClient.setDefaultOptions(defaultOptions);
@@ -382,12 +388,12 @@ describe("useTypeaheadQuery", () => {
   describe("query key generation", () => {
     it("should generate different query keys for different api types", () => {
       const { result: autocompleteResult } = renderHook(
-        () => useTypeaheadQuery({ client: mockClient, source: "autocomplete", enabled: false }),
+        () => useTypeaheadQuery({ client: mockClient, apiName: "autocomplete", enabled: false }),
         { wrapper: createWrapper(mockClient) },
       );
 
       const { result: suggestResult } = renderHook(
-        () => useTypeaheadQuery({ client: mockClient, source: "suggest", enabled: false }),
+        () => useTypeaheadQuery({ client: mockClient, apiName: "suggest", enabled: false }),
         { wrapper: createWrapper(mockClient) },
       );
 
@@ -400,8 +406,8 @@ describe("useTypeaheadQuery", () => {
         () =>
           useTypeaheadQuery({
             client: mockClient,
-            source: "autocomplete",
-            sourceInput: { QueryText: "test1" },
+            apiName: "autocomplete",
+            apiInput: { QueryText: "test1" },
             enabled: false,
           }),
         { wrapper: createWrapper(mockClient) },
@@ -411,8 +417,8 @@ describe("useTypeaheadQuery", () => {
         () =>
           useTypeaheadQuery({
             client: mockClient,
-            source: "autocomplete",
-            sourceInput: { QueryText: "test2" },
+            apiName: "autocomplete",
+            apiInput: { QueryText: "test2" },
             enabled: false,
           }),
         { wrapper: createWrapper(mockClient) },

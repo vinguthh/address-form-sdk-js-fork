@@ -1,10 +1,12 @@
-interface LogoProps {
+import { ComponentProps } from "react";
+
+interface LogoProps extends ComponentProps<"a"> {
   mode: "Light" | "Dark";
 }
 
-export const Logo = ({ mode }: LogoProps) => {
+export const Logo = ({ mode, ...rest }: LogoProps) => {
   return (
-    <a href="https://aws.amazon.com/location/" target="_blank" rel="noreferrer">
+    <a {...rest} href="https://aws.amazon.com/location/" target="_blank" rel="noreferrer">
       {mode === "Light" ? (
         <svg xmlns="http://www.w3.org/2000/svg" width="133" height="23" viewBox="0 0 198 34">
           <g fill="none">

@@ -7,13 +7,8 @@ import { useDebounce } from "../../utils/debounce.ts";
 import { getPlaceQuery } from "../../utils/queries.ts";
 import { Input } from "../Input/index.tsx";
 import { LocateButton } from "../LocateButton";
-import { base, currentLocation, info, input, option, options } from "./styles.css.ts";
-import {
-  TypeaheadResultItem,
-  TypeaheadSource,
-  TypeaheadSourceInput,
-  useTypeaheadQuery,
-} from "./use-typeahead-query.ts";
+import { base, brandOption, brandOptionLink, currentLocation, info, input, option, options } from "./styles.css.ts";
+import { TypeaheadAPIInput, TypeaheadAPIName, TypeaheadResultItem, useTypeaheadQuery } from "./use-typeahead-query.ts";
 
 export interface TypeaheadOutput {
   addressLineOneField?: string;
@@ -26,8 +21,8 @@ export interface TypeaheadProps {
   name?: string;
   placeholder?: string;
   className?: string;
-  source: TypeaheadSource | null;
-  sourceInput?: TypeaheadSourceInput;
+  apiName: TypeaheadAPIName | null;
+  apiInput?: TypeaheadAPIInput;
   value: string;
   onChange: (value: string) => void;
   onSelect: (value: TypeaheadOutput) => void;
@@ -35,23 +30,23 @@ export interface TypeaheadProps {
   debounce?: number;
 }
 
-export const Typeahead = ({ source, ...props }: TypeaheadProps) => {
-  return source ? <SourceTypeahead {...props} source={source} /> : <InputTypeahead {...props} source={null} />;
+export const Typeahead = ({ apiName, ...props }: TypeaheadProps) => {
+  return apiName ? <APITypeahead {...props} apiName={apiName} /> : <InputTypeahead {...props} apiName={null} />;
 };
 
-const SourceTypeahead = ({
+const APITypeahead = ({
   id,
   name,
   placeholder,
   className,
   value,
   onChange,
-  source,
-  sourceInput,
+  apiName,
+  apiInput,
   onSelect,
   showCurrentLocation = true,
   debounce = 300,
-}: TypeaheadProps & { source: TypeaheadSource }) => {
+}: TypeaheadProps & { apiName: TypeaheadAPIName }) => {
   const debouncedValue = useDebounce(value, debounce);
   const { client } = useAmazonLocationContext();
   const queryClient = useQueryClient();
@@ -59,8 +54,8 @@ const SourceTypeahead = ({
 
   const { data = [], isLoading } = useTypeaheadQuery({
     client,
-    source,
-    sourceInput: { QueryText: debouncedValue, MaxResults: 5, ...sourceInput },
+    apiName,
+    apiInput: { QueryText: debouncedValue, MaxResults: 5, ...apiInput },
     enabled: isValid,
   });
 
@@ -69,17 +64,17 @@ const SourceTypeahead = ({
       return;
     }
 
-    onChange(address.title);
-
     const result = await queryClient.ensureQueryData(
       getPlaceQuery(client, {
         PlaceId: address.placeId,
-        Language: sourceInput?.Language,
-        PoliticalView: sourceInput?.PoliticalView,
+        Language: apiInput?.Language,
+        PoliticalView: apiInput?.PoliticalView,
       }),
     );
 
     const [lng, lat] = result.Position ?? [];
+    const addressLineOneOnly = [result.Address?.AddressNumber, result.Address?.Street].filter(Boolean).join(" ");
+    onChange((addressLineOneOnly || result.Address?.Label) ?? address.title);
 
     onSelect({
       addressLineOneField: result.Address?.Label ?? "",
@@ -116,7 +111,8 @@ const SourceTypeahead = ({
             transition
             anchor="bottom start"
             className={options}
-            data-testid={`aws-typeahead-results-${source}`}
+            data-testid={`aws-typeahead-results-${apiName}`}
+            modal={false}
           >
             {isLoading && (
               <ComboboxOption value={null} className={info} disabled>
@@ -135,6 +131,12 @@ const SourceTypeahead = ({
                 {results.title}
               </ComboboxOption>
             ))}
+
+            <ComboboxOption value={null} className={brandOption} disabled>
+              <a className={brandOptionLink} href="https://aws.amazon.com/location/" target="_blank" rel="noreferrer">
+                Powered by Amazon Location
+              </a>
+            </ComboboxOption>
           </ComboboxOptions>
         )}
       </Combobox>

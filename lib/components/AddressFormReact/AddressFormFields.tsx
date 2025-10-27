@@ -2,7 +2,7 @@ import { ComponentProps, memo, PropsWithChildren } from "react";
 import { replaceChildElements } from "../../utils/replace-child-elements";
 import { AddressFormData } from "../AddressForm";
 import { Button } from "../Button";
-import { TypeaheadSource } from "../Typeahead/use-typeahead-query";
+import { TypeaheadAPIName } from "../Typeahead/use-typeahead-query";
 import { AddressFormAddressField } from "./AddressFormAddressField";
 import { AddressFormCountryField } from "./AddressFormCountryField";
 import { AddressFormTextField } from "./AddressFormTextField";
@@ -26,13 +26,13 @@ export const AddressFormFields = memo(({ children }: PropsWithChildren) => {
     // Address
     {
       search: <input data-type="address-form" name={Field.ADDRESS_LINE_ONE} />,
-      replace: ({ "aria-label": label, name, placeholder, className, ...rest }: ComponentProps<"input">) => (
+      replace: ({ "aria-label": label, placeholder, className, ...rest }: ComponentProps<"input">) => (
         <AddressFormAddressField
-          name={name as Field}
+          name={Field.ADDRESS_LINE_ONE}
           label={label ?? "Address"}
           placeholder={placeholder ?? "Enter address"}
           className={className}
-          apiName={(getString(rest, "data-api-name") ?? "autocomplete") as TypeaheadSource}
+          apiName={(getString(rest, "data-api-name") ?? "autocomplete") as TypeaheadAPIName}
           showCurrentLocation={getBoolean(rest, "data-show-current-location") ?? true}
         />
       ),
@@ -41,9 +41,9 @@ export const AddressFormFields = memo(({ children }: PropsWithChildren) => {
     // Address Line 2
     {
       search: <input data-type="address-form" name={Field.ADDRESS_LINE_TWO} />,
-      replace: ({ "aria-label": label, name, placeholder, className }: ComponentProps<"input">) => (
+      replace: ({ "aria-label": label, placeholder, className }: ComponentProps<"input">) => (
         <AddressFormTextField
-          name={name as Field}
+          name={Field.ADDRESS_LINE_TWO}
           label={label ?? "Address Line 2"}
           placeholder={placeholder ?? "Apartment, suite, etc."}
           className={className}
@@ -54,9 +54,9 @@ export const AddressFormFields = memo(({ children }: PropsWithChildren) => {
     // City
     {
       search: <input data-type="address-form" name={Field.CITY} />,
-      replace: ({ "aria-label": label, name, placeholder, className }: ComponentProps<"input">) => (
+      replace: ({ "aria-label": label, placeholder, className }: ComponentProps<"input">) => (
         <AddressFormTextField
-          name={name as Field}
+          name={Field.CITY}
           label={label ?? "City"}
           placeholder={placeholder}
           className={className}
@@ -67,9 +67,9 @@ export const AddressFormFields = memo(({ children }: PropsWithChildren) => {
     // Province/State
     {
       search: <input data-type="address-form" name={Field.PROVINCE} />,
-      replace: ({ "aria-label": label, name, placeholder, className }: ComponentProps<"input">) => (
+      replace: ({ "aria-label": label, placeholder, className }: ComponentProps<"input">) => (
         <AddressFormTextField
-          name={name as Field}
+          name={Field.PROVINCE}
           label={label ?? "Province/State"}
           placeholder={placeholder}
           className={className}
@@ -80,9 +80,9 @@ export const AddressFormFields = memo(({ children }: PropsWithChildren) => {
     // Postal/Zip code
     {
       search: <input data-type="address-form" name={Field.POSTAL_CODE} />,
-      replace: ({ "aria-label": label, name, placeholder, className }: ComponentProps<"input">) => (
+      replace: ({ "aria-label": label, placeholder, className }: ComponentProps<"input">) => (
         <AddressFormTextField
-          name={name as Field}
+          name={Field.POSTAL_CODE}
           label={label ?? "Postal/Zip code"}
           placeholder={placeholder}
           className={className}
@@ -93,9 +93,9 @@ export const AddressFormFields = memo(({ children }: PropsWithChildren) => {
     // Country
     {
       search: <input data-type="address-form" name={Field.COUNTRY} />,
-      replace: ({ "aria-label": label, name, placeholder, className }: ComponentProps<"input">) => (
+      replace: ({ "aria-label": label, placeholder, className }: ComponentProps<"input">) => (
         <AddressFormCountryField
-          name={name as Field}
+          name={Field.COUNTRY}
           label={label ?? "Country"}
           className={className}
           placeholder={placeholder}
@@ -112,7 +112,7 @@ export const AddressFormFields = memo(({ children }: PropsWithChildren) => {
     // Reset
     {
       search: <button data-type="address-form" type="reset" />,
-      replace: (props: ComponentProps<"button">) => <Button {...props} type="reset" />,
+      replace: (props: ComponentProps<"button">) => <Button {...props} type="reset" variant="secondary" />,
     },
   ]);
 });

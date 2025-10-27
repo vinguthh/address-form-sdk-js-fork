@@ -2,14 +2,14 @@ import { AutocompleteCommandInput, GeoPlacesClient, SuggestCommandInput } from "
 import { useQuery } from "@tanstack/react-query";
 import { autocomplete, suggest } from "../../utils/api";
 
-export type TypeaheadSource = "autocomplete" | "suggest";
+export type TypeaheadAPIName = "autocomplete" | "suggest";
 
-export type TypeaheadSourceInput = Partial<AutocompleteCommandInput> | Partial<SuggestCommandInput>;
+export type TypeaheadAPIInput = Partial<AutocompleteCommandInput> | Partial<SuggestCommandInput>;
 
 export type UseTypeaheadParams = {
   client: GeoPlacesClient;
-  source: TypeaheadSource;
-  sourceInput?: TypeaheadSourceInput;
+  apiName: TypeaheadAPIName;
+  apiInput?: TypeaheadAPIInput;
   enabled: boolean;
 };
 
@@ -18,26 +18,26 @@ export interface TypeaheadResultItem {
   placeId: string;
 }
 
-export const useTypeaheadQuery = ({ client, source, sourceInput, enabled }: UseTypeaheadParams) => {
+export const useTypeaheadQuery = ({ client, apiName, apiInput, enabled }: UseTypeaheadParams) => {
   return useQuery({
     enabled,
-    queryKey: ["typeahead", source, sourceInput],
+    queryKey: ["typeahead", apiName, apiInput],
     queryFn: () => {
-      if (source === "autocomplete") {
+      if (apiName === "autocomplete") {
         return getAutocompleteResults(client, {
           QueryText: "",
-          ...(sourceInput as Partial<AutocompleteCommandInput>),
+          ...(apiInput as Partial<AutocompleteCommandInput>),
         });
       }
 
-      if (source === "suggest") {
+      if (apiName === "suggest") {
         return getSuggestResults(client, {
           QueryText: "",
-          ...(sourceInput as Partial<SuggestCommandInput>),
+          ...(apiInput as Partial<SuggestCommandInput>),
         });
       }
 
-      throw new Error(`Invalid value for typeahead source: '${source}'`);
+      throw new Error(`Invalid value for typeahead api name: '${apiName}'`);
     },
   });
 };
@@ -72,7 +72,7 @@ const getSuggestResults = async (
       return item.Place?.PlaceId && item.Title;
     }).map((item) => ({
       placeId: item.Place!.PlaceId!,
-      title: item.Title!,
+      title: item.Place?.Address?.Label ?? item.Title!,
     })) ?? []
   );
 };

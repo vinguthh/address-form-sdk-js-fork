@@ -18,12 +18,12 @@ const renderWithContext = (ui: React.ReactElement) => {
 
 describe("AddressForm", () => {
   it("renders form element", () => {
-    renderWithContext(<AddressForm apiKey="test" region="us-east-1" />);
+    renderWithContext(<AddressForm apiKey="test" region="us-east-1"><div /></AddressForm>);
     expect(document.querySelector("form")).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
-    renderWithContext(<AddressForm apiKey="test" region="us-east-1" className="custom" />);
+    renderWithContext(<AddressForm apiKey="test" region="us-east-1" className="custom"><div /></AddressForm>);
     expect(document.querySelector("form")).toHaveClass("custom");
   });
 

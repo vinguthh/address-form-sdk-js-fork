@@ -4,13 +4,13 @@ import { action } from "@storybook/addon-actions";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
-  title: "Component/AddressForm",
+  title: "Component/AddressFormComponent",
   component: AddressForm,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
   },
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
-  tags: ["autodocs"],
+  tags: ["!dev"],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {},
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#action-args
@@ -30,7 +30,7 @@ export const Default: Story = {
       // center: [-123.2063035, 49.2578182],
     },
     typeahead: {
-      source: "suggest",
+      apiName: "suggest",
       placeTypes: ["Locality", "PostalCode"],
       // allowedCountries: ["FR"],
     },
@@ -41,7 +41,7 @@ export const ConfigurableDefaultConfig: Story = {
   args: {
     fields: defaultAddressFormFields,
     typeahead: {
-      source: "autocomplete",
+      apiName: "autocomplete",
       placeTypes: ["Locality", "PostalCode"],
     },
   },

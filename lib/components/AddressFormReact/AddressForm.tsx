@@ -1,16 +1,17 @@
 import { AutocompleteFilterPlaceType } from "@aws-sdk/client-geo-places";
 import clsx from "clsx";
-import { ComponentProps, FormEvent, FormEventHandler, FunctionComponent, useMemo, useState } from "react";
+import { ComponentProps, FormEvent, FormEventHandler, FunctionComponent, ReactNode } from "react";
 import { AddressFormData } from "../AddressForm";
-import { AddressFormContext, AddressFormContextType, MapViewState } from "./AddressFormContext";
+import { AddressFormAddressField, AddressFormAddressFieldProps } from "./AddressFormAddressField";
+import { useAddressFormContext } from "./AddressFormContext";
+import { AddressFormCountryField, AddressFormCountryFieldProps } from "./AddressFormCountryField";
 import { AddressFormFields } from "./AddressFormFields";
 import { AddressFormMap, AddressFormMapProps } from "./AddressFormMap";
+import { AddressFormProvider } from "./AddressFormProvider";
 import { AddressFormTextField, AddressFormTextFieldProps } from "./AddressFormTextField";
 import * as styles from "./styles.css";
-import { AddressFormCountryField, AddressFormCountryFieldProps } from "./AddressFormCountryField";
-import { AddressFormAddressField, AddressFormAddressFieldProps } from "./AddressFormAddressField";
 
-interface AddressFormProps extends Omit<ComponentProps<"form">, "onSubmit"> {
+export interface AddressFormProps extends AddressFormContentProps {
   apiKey: string;
   region: string;
   preventDefaultOnSubmit?: boolean;
@@ -33,64 +34,60 @@ export const AddressForm: FunctionComponent<AddressFormProps> & ChildComponents 
   apiKey,
   region,
   children,
-  className,
-  onSubmit,
   language,
   politicalView,
-  preventDefaultOnSubmit = true,
   showCurrentCountryResultsOnly,
   allowedCountries,
   placeTypes,
+  ...contentProps
+}) => {
+  return (
+    <AddressFormProvider
+      apiKey={apiKey}
+      region={region}
+      language={language}
+      politicalView={politicalView}
+      showCurrentCountryResultsOnly={showCurrentCountryResultsOnly}
+      allowedCountries={allowedCountries}
+      placeTypes={placeTypes}
+    >
+      <AddressFormContent {...contentProps}>{children}</AddressFormContent>
+    </AddressFormProvider>
+  );
+};
+
+interface AddressFormContentProps extends Omit<ComponentProps<"form">, "onSubmit"> {
+  preventDefaultOnSubmit?: boolean;
+  onSubmit?: (event: FormEvent & { data: AddressFormData }) => void;
+  className?: string;
+  children: ReactNode;
+}
+
+const AddressFormContent: FunctionComponent<AddressFormContentProps> = ({
+  children,
+  className,
+  onSubmit,
+  preventDefaultOnSubmit = true,
   ...rest
 }) => {
-  const [data, setData] = useState<AddressFormData>({});
-  const [mapViewState, setMapViewState] = useState<MapViewState>();
-
-  const context = useMemo<AddressFormContextType>(
-    () => ({
-      apiKey,
-      region,
-      data,
-      setData: (data: AddressFormData) => setData((state) => ({ ...state, ...data })),
-      mapViewState,
-      setMapViewState,
-      language,
-      politicalView,
-      showCurrentCountryResultsOnly,
-      allowedCountries,
-      placeTypes,
-    }),
-    [
-      allowedCountries,
-      apiKey,
-      data,
-      language,
-      mapViewState,
-      placeTypes,
-      politicalView,
-      region,
-      showCurrentCountryResultsOnly,
-    ],
-  );
+  const context = useAddressFormContext();
 
   const handleSubmit: FormEventHandler = (event) => {
     if (preventDefaultOnSubmit) {
       event.preventDefault();
     }
 
-    onSubmit?.({ ...event, data });
+    onSubmit?.({ ...event, data: context.data });
   };
 
   const handleReset = () => {
-    setData({});
+    context.setData({});
   };
 
   return (
-    <AddressFormContext.Provider value={context}>
-      <form className={clsx(styles.root, className)} {...rest} onSubmit={handleSubmit} onReset={handleReset}>
-        <AddressFormFields>{children}</AddressFormFields>
-      </form>
-    </AddressFormContext.Provider>
+    <form className={clsx(styles.root, className)} {...rest} onSubmit={handleSubmit} onReset={handleReset}>
+      <AddressFormFields>{children}</AddressFormFields>
+    </form>
   );
 };
 

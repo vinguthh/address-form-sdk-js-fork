@@ -18,10 +18,10 @@ const meta = {
     layout: "centered",
   },
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
-  tags: ["autodocs"],
+  tags: ["!dev"],
   // More on argTypes: https://storybook.js.org/docs/api/argtypes
   argTypes: {
-    source: {
+    apiName: {
       control: "radio",
       options: ["autocomplete", "suggest", null],
     },
@@ -43,6 +43,6 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     value: "",
-    source: "autocomplete",
+    apiName: "autocomplete",
   }, // No need to specify the action here
 };

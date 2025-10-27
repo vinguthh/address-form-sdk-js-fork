@@ -37,7 +37,7 @@ describe("AddressForm", () => {
   });
 
   it("renders with default props", () => {
-    renderWithProvider(<AddressForm typeahead={{ source: "autocomplete" }} {...mockProps} />);
+    renderWithProvider(<AddressForm typeahead={{ apiName: "autocomplete" }} {...mockProps} />);
     expect(screen.getByTestId("aws-address-line-one")).toBeInTheDocument();
     expect(screen.getByTestId("aws-address-line-two")).toBeInTheDocument();
     expect(screen.getByTestId("aws-city")).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe("AddressForm", () => {
           placeholder: "Configured Country",
         },
       ],
-      typeahead: { source: null },
+      typeahead: { apiName: null },
       map: { hide: true },
     };
     renderWithProvider(<AddressForm {...configuredProps} />);
@@ -80,7 +80,7 @@ describe("AddressForm", () => {
   });
 
   it("submits form data when submit button is clicked", async () => {
-    const { container } = renderWithProvider(<AddressForm typeahead={{ source: "autocomplete" }} {...mockProps} />);
+    const { container } = renderWithProvider(<AddressForm typeahead={{ apiName: "autocomplete" }} {...mockProps} />);
     const form = container.querySelector("form")!;
     fireEvent.submit(form);
     expect(mockProps.onSubmit).toHaveBeenCalledTimes(1);
@@ -97,7 +97,7 @@ describe("AddressForm", () => {
   });
 
   it("renders the address form and submits with correct values", async () => {
-    const { container } = renderWithProvider(<AddressForm typeahead={{ source: "autocomplete" }} {...mockProps} />);
+    const { container } = renderWithProvider(<AddressForm typeahead={{ apiName: "autocomplete" }} {...mockProps} />);
     const form = container.querySelector("form")!;
 
     const inputValues: AddressFormData = {
