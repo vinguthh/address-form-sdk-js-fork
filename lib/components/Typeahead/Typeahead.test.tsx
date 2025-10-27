@@ -43,12 +43,12 @@ describe("Typeahead Component", () => {
   });
 
   it("should render the combobox field", () => {
-    renderWithProvider(<Typeahead source="autocomplete" {...mockProps} />);
+    renderWithProvider(<Typeahead apiName="autocomplete" {...mockProps} />);
     expect(screen.getByRole("combobox")).toBeInTheDocument();
   });
 
   it("should render the input field", () => {
-    renderWithProvider(<Typeahead source={null} {...mockProps} />);
+    renderWithProvider(<Typeahead apiName={null} {...mockProps} />);
     expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
     expect(screen.getByRole("textbox")).toBeInTheDocument();
   });
@@ -59,7 +59,7 @@ describe("Typeahead Component", () => {
       currentValue = newValue;
     });
     const TestComponent = () => (
-      <Typeahead source="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockProps.onSelect} />
+      <Typeahead apiName="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockProps.onSelect} />
     );
     const { rerender } = renderWithProvider(<TestComponent />);
 
@@ -104,7 +104,7 @@ describe("Typeahead Component", () => {
     });
 
     const TestComponent = () => (
-      <Typeahead source="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockProps.onSelect} />
+      <Typeahead apiName="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockProps.onSelect} />
     );
 
     const { rerender } = renderWithProvider(<TestComponent />);
@@ -127,7 +127,7 @@ describe("Typeahead Component", () => {
     });
 
     const TestComponent = () => (
-      <Typeahead source="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockProps.onSelect} />
+      <Typeahead apiName="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockProps.onSelect} />
     );
 
     renderWithProvider(<TestComponent />);
@@ -162,7 +162,7 @@ describe("Typeahead Component", () => {
     });
 
     const TestComponent = () => (
-      <Typeahead source="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockOnSelect} />
+      <Typeahead apiName="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockOnSelect} />
     );
 
     const { rerender } = renderWithProvider(<TestComponent />);
@@ -223,7 +223,7 @@ describe("Typeahead Component", () => {
     });
 
     const TestComponent = () => (
-      <Typeahead source="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockProps.onSelect} />
+      <Typeahead apiName="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockProps.onSelect} />
     );
 
     const { rerender } = renderWithProvider(<TestComponent />);
@@ -254,8 +254,8 @@ describe("Typeahead Component", () => {
 
     const TestComponent = () => (
       <Typeahead
-        source="autocomplete"
-        sourceInput={{ Language: "fr" }}
+        apiName="autocomplete"
+        apiInput={{ Language: "fr" }}
         value={currentValue}
         onChange={mockOnChange}
         onSelect={mockProps.onSelect}
@@ -290,8 +290,8 @@ describe("Typeahead Component", () => {
 
     const TestComponent = () => (
       <Typeahead
-        source="suggest"
-        sourceInput={{ BiasPosition: biasPosition }}
+        apiName="suggest"
+        apiInput={{ BiasPosition: biasPosition }}
         value={currentValue}
         onChange={mockOnChange}
         onSelect={mockProps.onSelect}
@@ -338,7 +338,7 @@ describe("Typeahead Component", () => {
     });
 
     const TestComponent = () => (
-      <Typeahead source="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockProps.onSelect} />
+      <Typeahead apiName="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockProps.onSelect} />
     );
 
     const { rerender } = renderWithProvider(<TestComponent />);

@@ -12,6 +12,7 @@ export const input = style({
 
 export const option = style({
   padding: "0.5rem 0.75rem",
+  fontSize: "0.8rem",
 
   selectors: {
     '&[data-headlessui-state~="active"]': {
@@ -39,4 +40,16 @@ export const currentLocation = style({
   position: "absolute",
   right: "0.5rem",
   top: "0.55rem",
+});
+
+export const brandOption = style({
+  textAlign: "right",
+  padding: "0.5rem 0.75rem",
+  fontSize: "0.7rem",
+  fontWeight: "bold",
+});
+
+export const brandOptionLink = style({
+  textDecoration: "none",
+  color: "gray",
 });

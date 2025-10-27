@@ -3,14 +3,14 @@ import { getIncludeCountriesFilter } from "../../main";
 import { AddressFormData } from "../AddressForm";
 import { FormField } from "../FormField";
 import { Typeahead, TypeaheadOutput } from "../Typeahead";
-import { TypeaheadSource } from "../Typeahead/use-typeahead-query";
+import { TypeaheadAPIName } from "../Typeahead/use-typeahead-query";
 import { useAddressFormContext } from "./AddressFormContext";
 
 export interface AddressFormAddressFieldProps {
   name: keyof AddressFormData;
   label: string;
   showCurrentLocation: boolean;
-  apiName: TypeaheadSource | null;
+  apiName: TypeaheadAPIName | null;
   placeholder?: string;
   className?: string;
 }
@@ -45,8 +45,8 @@ export const AddressFormAddressField = memo(
           placeholder={placeholder}
           className={className}
           showCurrentLocation={showCurrentLocation}
-          source={apiName}
-          sourceInput={{
+          apiName={apiName}
+          apiInput={{
             PoliticalView: context.politicalView,
             Language: context.language,
             BiasPosition: context.mapViewState

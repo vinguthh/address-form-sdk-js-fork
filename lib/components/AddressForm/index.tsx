@@ -10,7 +10,7 @@ import { Input } from "../Input";
 import { Map, MapProps, MapStyle } from "../Map";
 import { MapMarker, MapMarkerProps } from "../MapMarker/index.tsx";
 import { Typeahead, TypeaheadOutput, TypeaheadProps } from "../Typeahead";
-import { TypeaheadSource } from "../Typeahead/use-typeahead-query.ts";
+import { TypeaheadAPIName } from "../Typeahead/use-typeahead-query.ts";
 import * as styles from "./styles.css.ts";
 import { positionToString } from "../../utils/position.ts";
 import { countries } from "../../main.tsx";
@@ -40,7 +40,7 @@ export interface AddressFormProps {
   typeahead: Config<
     TypeaheadProps,
     {
-      source: TypeaheadSource | null;
+      apiName: TypeaheadAPIName | null;
       showCurrentLocation?: boolean;
       showCurrentCountryResultsOnly?: boolean;
       placeTypes?: Array<AutocompleteFilterPlaceType>;
@@ -153,7 +153,7 @@ export function AddressForm({
 
   const register = (name: keyof AddressFormData): ComponentProps<"input"> => {
     return {
-      value: formState[name],
+      value: formState[name] ?? "",
       onChange: (e) => setFormState((state) => ({ ...state, [name]: e.target.value })),
     };
   };
@@ -174,8 +174,8 @@ export function AddressForm({
                     onSelect={handleTypeaheadSelect}
                     placeholder={config.placeholder}
                     showCurrentLocation={typeahead.showCurrentLocation}
-                    source={typeahead.source}
-                    sourceInput={{
+                    apiName={typeahead.apiName}
+                    apiInput={{
                       PoliticalView: politicalView,
                       Language: language,
                       BiasPosition: [viewState.longitude, viewState.latitude],
@@ -207,7 +207,6 @@ export function AddressForm({
                     data-testid={config.id}
                     {...register(config.name)}
                     placeholder={config.placeholder}
-                    value={formState[config.name] ?? ""}
                   />
                 )}
               </FormField>
