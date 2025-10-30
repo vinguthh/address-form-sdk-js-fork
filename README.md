@@ -4,7 +4,7 @@ The Address Form SDK simplifies the development of autofill address forms. As us
 
 ## Getting Started
 
-The Address Form SDK can be used within a React app. Get started by following the instructions below or use the step by step wizard from our console to configure the address form.
+The Address Form SDK can be used within a React app or in a standalone HTML and JavaScript page. Get started by following the instructions below or use the step by step wizard from our console to configure the address form.
 
 ### Prerequisites
 
@@ -22,11 +22,37 @@ The use of the Address Form will require the following actions to be allowed in 
 
 ### Installation
 
+#### React
+
 Install the SDK in your React app by running: `npm install @aws/address-form-sdk-js`
+
+#### HTML/JavaScript
+
+Include the following in your HTML code the CSS and JavaScript for the SDK
+
+```
+...
+<head>
+...
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js/address-form-sdk.css"
+  />
+...
+</head>
+...
+<body>
+...
+  <script src="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js"></script>
+</body>
+...
+```
 
 ### Use SDK
 
 Implement the following code into your React app. Replace the `AMAZON_LOCATION_API_KEY` value with your API key and `AMAZON_LOCATION_REGION` with the region of the API key. The data returned when the form is submitted is returned from `onSubmit`
+
+#### React
 
 ```
 import React from 'react';
@@ -96,15 +122,68 @@ export default function App() {
 }
 ```
 
+#### HTML/JavaScript
+
+```
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Address Form</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js/address-form-sdk.css"
+    />
+  </head>
+  <body>
+    <form id="amazon-location-address-form" data-type="address-form">
+      <div data-type="address-form">
+        <input
+          data-type="address-form"
+          name="addressLineOne"
+          placeholder="Enter address"
+          data-api-name="autocomplete"
+        />
+        <input data-type="address-form" name="addressLineTwo" />
+        <input data-type="address-form" name="city" placeholder="City" />
+        <input
+          data-type="address-form"
+          name="province"
+          placeholder="State/Province"
+        />
+        <input data-type="address-form" name="postalCode" />
+        <input data-type="address-form" name="country" placeholder="Country" />
+        <div data-type="address-form">
+          <button data-type="address-form" type="submit">Submit</button>
+          <button data-type="address-form" type="reset">Reset</button>
+        </div>
+      </div>
+      <div data-type="address-form-map" data-map-style="Standard,Light"></div>
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js"></script>
+    <script>
+      AddressForm.render({
+        root: "#amazon-location-address-form",
+        apiKey: AMAZON_LOCATION_API_KEY,
+        region: AMAZON_LOCATION_REGION,
+        onSubmit: (data) => console.log(data),
+      });
+    </script>
+  </body>
+</html>
+```
+
 ### Customization
 
-The form is fully customizable - add, remove, or rearrange elements as needed for your use case. Replace the `Flex` component with your own CSS framework or custom styling. You can control other functionalities of the address form through the component props. See the [API Reference](#api-reference) for complete customization options.
+The form is fully customizable - add, remove, or rearrange elements as needed for your use case. Replace the `Flex` component with your own CSS framework or custom styling. You can control other functionalities of the address form through the component props/attributes. See the [API Reference](#api-reference) for complete customization options.
 
 ## API Reference
 
 ### AddressForm
 
-The main component that wraps the address form functionality.
+**React:** The main component that wraps the address form functionality. `<AddressForm>`
+
+**HTML/JavaScript:** The function used for rendering the address form onto the page `AddressForm.render({ ... })`
 
 #### Props
 
@@ -169,22 +248,32 @@ Primary address input with autocomplete functionality.
 
 Map component for displaying and adjusting address location.
 
+**React:** Map component for displaying and adjusting address location. `<AddressFormMap>`
+
+**HTML/JavaScript:** Map element for displaying and adjusting address location.`<div data-type="address-form-map">`
+
 #### Props
 
-| Property                | Type      | Required | Default | Description                            |
-| ----------------------- | --------- | -------- | ------- | -------------------------------------- |
-| `mapStyle`              | `array`   | Yes      | -       | Map style configuration                |
-| `showNavigationControl` | `boolean` | No       | `true`  | Display map navigation controls        |
-| `adjustablePosition`    | `boolean` | No       | `true`  | Allow users to adjust address position |
+#### Props
+
+| React Property          | React Type | HTML/JavaScript Attribute      | HTML/JavaScript Type | Required | Default | Description                            |
+| ----------------------- | ---------- | ------------------------------ | -------------------- | -------- | ------- | -------------------------------------- |
+| `mapStyle`              | `array`    | `data-map-style`               | `string`             | Yes      | -       | Map style configuration                |
+| `showNavigationControl` | `boolean`  | `data-show-navigation-control` | `string`             | No       | `true`  | Display map navigation controls        |
+| `adjustablePosition`    | `boolean`  | `data-adjustable-position`     | `string`             | No       | `true`  | Allow users to adjust address position |
 
 #### Map Style Options
 
-- `['Standard', 'Light']`
-- `['Standard', 'Dark']`
-- `['Monochrome', 'Light']`
-- `['Monochrome', 'Dark']`
-- `['Hybrid']`
-- `['Satellite']`
+#### Map Style Options
+
+| React                     | HTML/JavaScript      |
+| ------------------------- | -------------------- |
+| `['Standard', 'Light']`   | `"Standard,Light"`   |
+| `['Standard', 'Dark']`    | `"Standard,Dark"`    |
+| `['Monochrome', 'Light']` | `"Monochrome,Light"` |
+| `['Monochrome', 'Dark']`  | `"Monochrome,Dark"`  |
+| `['Hybrid']`              | `"Hybrid"`           |
+| `['Satellite']`           | `"Satellite"`        |
 
 ## Contributing
 
