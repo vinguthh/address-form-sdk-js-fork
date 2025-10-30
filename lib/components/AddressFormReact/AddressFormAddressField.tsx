@@ -10,7 +10,7 @@ export interface AddressFormAddressFieldProps {
   name: keyof AddressFormData;
   label: string;
   showCurrentLocation: boolean;
-  apiName: TypeaheadAPIName | null;
+  apiName: string | TypeaheadAPIName | null; // Using string so we can validate the value when using HTML form
   placeholder?: string;
   className?: string;
 }
@@ -18,6 +18,7 @@ export interface AddressFormAddressFieldProps {
 export const AddressFormAddressField = memo(
   ({ name, label, className, showCurrentLocation, apiName, placeholder }: AddressFormAddressFieldProps) => {
     const context = useAddressFormContext();
+    const validatedApiName = validateApiNameProp(apiName);
     const id = useId();
 
     const handleTypeaheadSelect = (value: TypeaheadOutput) => {
@@ -45,7 +46,7 @@ export const AddressFormAddressField = memo(
           placeholder={placeholder}
           className={className}
           showCurrentLocation={showCurrentLocation}
-          apiName={apiName}
+          apiName={validatedApiName}
           apiInput={{
             PoliticalView: context.politicalView,
             Language: context.language,
@@ -69,3 +70,9 @@ export const AddressFormAddressField = memo(
     );
   },
 );
+
+const validateApiNameProp = (apiName: string | TypeaheadAPIName | null): TypeaheadAPIName | null => {
+  if (apiName === "" || apiName === null) return null;
+  if (apiName === "autocomplete" || apiName === "suggest") return apiName;
+  throw new Error(`Invalid apiName: "${apiName}". Must be "autocomplete", "suggest", or null.`);
+};

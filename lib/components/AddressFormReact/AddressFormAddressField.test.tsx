@@ -82,4 +82,39 @@ describe("AddressFormAddressField", () => {
     const input = document.querySelector("input");
     expect(input).toHaveValue("");
   });
+
+  it("accepts string apiName values", () => {
+    renderWithProvider(
+      <AddressFormContext.Provider value={mockContextValue}>
+        <AddressFormAddressField name="addressLineOne" label="Address" showCurrentLocation={false} apiName="suggest" />
+      </AddressFormContext.Provider>,
+    );
+
+    expect(document.querySelector("input")).toBeInTheDocument();
+  });
+
+  it("treats empty string apiName as null", () => {
+    renderWithProvider(
+      <AddressFormContext.Provider value={mockContextValue}>
+        <AddressFormAddressField name="addressLineOne" label="Address" showCurrentLocation={false} apiName="" />
+      </AddressFormContext.Provider>,
+    );
+
+    expect(document.querySelector("input")).toBeInTheDocument();
+  });
+
+  it("throws error for invalid apiName", () => {
+    expect(() => {
+      renderWithProvider(
+        <AddressFormContext.Provider value={mockContextValue}>
+          <AddressFormAddressField
+            name="addressLineOne"
+            label="Address"
+            showCurrentLocation={false}
+            apiName="invalid"
+          />
+        </AddressFormContext.Provider>,
+      );
+    }).toThrow('Invalid apiName: "invalid". Must be "autocomplete", "suggest", or null.');
+  });
 });

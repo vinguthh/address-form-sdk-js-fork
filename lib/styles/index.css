@@ -1,0 +1,18 @@
+.address-form.flex-row,
+.address-form .flex-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: row;
+}
+
+.address-form.flex-column,
+.address-form .flex-column {
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: column;
+}
+
+.address-form .flex-row.flex-1 > *,
+.address-form.flex-row.flex-1 > * {
+  flex: 1;
+}
