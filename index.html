@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amazon Location - Address Form</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- Address Form HTML Example -->
+
+    <form id="amazon-location-address-form" class="address-form flex-row flex-1">
+      <div class="flex-column">
+        <input data-type="address-form" name="addressLineOne" data-show-current-location />
+        <input data-type="address-form" name="addressLineTwo" />
+        <input data-type="address-form" name="city" />
+        <input data-type="address-form" name="postalCode" />
+        <input data-type="address-form" name="province" />
+        <input data-type="address-form" name="country" />
+        <div class="flex-row">
+          <button data-type="address-form" type="submit">Submit</button>
+          <button data-type="address-form" type="reset">Reset</button>
+        </div>
+      </div>
+      <div data-type="address-form" data-map-style="Standard,Light"></div>
+    </form>
+
+    <script type="module">
+      import * as AddressForm from "/lib/main-standalone.tsx";
+
+      AddressForm.render({
+        root: "#amazon-location-address-form",
+        apiKey: import.meta.env.VITE_APP_API_KEY,
+        region: import.meta.env.VITE_APP_REGION,
+        onSubmit: (e) => console.log(e.data),
+      });
+    </script>
+  </body>
+</html>

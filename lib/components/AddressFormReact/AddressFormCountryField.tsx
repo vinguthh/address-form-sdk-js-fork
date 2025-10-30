@@ -24,6 +24,7 @@ export const AddressFormCountryField = memo(({ name, className, label, placehold
         placeholder={placeholder}
         multiple={false}
         value={context.data[name] ?? null}
+        allowedCountries={context.allowedCountries}
         onChange={(country) => context.setData({ [name]: country ?? undefined })}
       />
     </FormField>
