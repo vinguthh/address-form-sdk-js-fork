@@ -199,6 +199,24 @@ The form is fully customizable - add, remove, or rearrange elements as needed fo
 | `placeTypes`                    | `AutocompleteFilterPlaceType[]` | No       | -       | Array of place types to filter results (e.g., "Locality", "PostalCode")    |
 | `onSubmit`                      | `(data) => void`                | No       | -       | Callback function triggered on form submission                             |
 
+#### Form Submission Data
+
+When the form is submitted, the `onSubmit` callback receives a data object containing the following properties:
+
+| Property                | Type      | Description                                                                                    |
+| ----------------------- | --------- | ---------------------------------------------------------------------------------------------- |
+| `addressLineOne`        | `string`  | Primary address line (street address)                                                          |
+| `addressLineTwo`        | `string`  | Secondary address line (apartment, suite, etc.)                                                |
+| `city`                  | `string`  | City name                                                                                      |
+| `province`              | `string`  | State or province                                                                              |
+| `postalCode`            | `string`  | Postal or ZIP code                                                                             |
+| `country`               | `string`  | Country code (ISO 3166-1 alpha-2)                                                             |
+| `originalPosition`      | `string`  | Original coordinates from API response (longitude,latitude)                                    |
+| `adjustedPosition`      | `string`  | User-adjusted coordinates if map pin was moved (longitude,latitude)                           |
+| `additionalAddressData` | `Address` | Complete address object from Amazon Location Service API (GetPlace/ReverseGeocode response)   |
+
+**Note:** The `additionalAddressData` property contains the full API response from Amazon Location Service and is only present when the address was populated through our APIs (typeahead selection or locate button). Addresses entered manually by users will not contain this property.
+
 ### Form Input Fields
 
 All input fields use the `data-type="address-form"` attribute along with a `name=` attribute. The following common properties are supported:
