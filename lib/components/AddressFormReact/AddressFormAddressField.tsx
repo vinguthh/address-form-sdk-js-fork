@@ -29,7 +29,7 @@ export const AddressFormAddressField = memo(
         province: value.fullAddress?.Region?.Name,
         country: value.fullAddress?.Country?.Code2,
         originalPosition: value.position?.join(","),
-        additionalAddressData: value.fullAddress,
+        addressDetails: value.fullAddress,
       });
 
       if (value.position) {

@@ -25,7 +25,7 @@ export interface AddressFormData {
   country?: string;
   originalPosition?: string;
   adjustedPosition?: string;
-  additionalAddressData?: Address;
+  addressDetails?: Address;
 }
 
 export type AddressFormField = {
@@ -107,7 +107,7 @@ export function AddressForm({
       country: formState.country ?? "",
       originalPosition: formState.originalPosition ?? "",
       adjustedPosition: formState.adjustedPosition ?? "",
-      additionalAddressData: formState.additionalAddressData,
+      addressDetails: formState.addressDetails,
     });
   };
 
@@ -129,7 +129,7 @@ export function AddressForm({
       province: value.fullAddress?.Region?.Name,
       country: value.fullAddress?.Country?.Code2,
       originalPosition: value.position ? positionToString(value.position) : "",
-      additionalAddressData: value.fullAddress,
+      addressDetails: value.fullAddress,
     }));
 
     // Draw marker on map
@@ -155,7 +155,7 @@ export function AddressForm({
   };
 
   const register = (name: keyof AddressFormData): ComponentProps<"input"> => {
-    if (name === "additionalAddressData") {
+    if (name === "addressDetails") {
       return {};
     }
 

@@ -128,7 +128,7 @@ describe("AddressFormAddressField", () => {
     }).toThrow('Invalid apiName: "invalid". Must be "autocomplete", "suggest", or null.');
   });
 
-  it("updates context with additionalAddressData when typeahead result is selected", async () => {
+  it("updates context with addressDetails when typeahead result is selected", async () => {
     vi.clearAllMocks();
 
     // Create a real data state to capture updates
@@ -219,7 +219,7 @@ describe("AddressFormAddressField", () => {
       );
     });
 
-    // Verify context was updated with address data including additionalAddressData
+    // Verify context was updated with address data including addressDetails
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -229,13 +229,13 @@ describe("AddressFormAddressField", () => {
           province: "BC",
           country: "CA",
           originalPosition: "-123.1207,49.2827",
-          additionalAddressData: mockGetPlaceResponse.Address,
+          addressDetails: mockGetPlaceResponse.Address,
         }),
       );
     });
   });
 
-  it("updates context with additionalAddressData when locate button is clicked", async () => {
+  it("updates context with addressDetails when locate button is clicked", async () => {
     vi.clearAllMocks();
 
     // Mock geolocation
@@ -323,7 +323,7 @@ describe("AddressFormAddressField", () => {
       );
     });
 
-    // Verify context was updated with address data including additionalAddressData
+    // Verify context was updated with address data including addressDetails
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -333,7 +333,7 @@ describe("AddressFormAddressField", () => {
           province: "BC",
           country: "CA",
           originalPosition: "-123.1207,49.2827",
-          additionalAddressData: mockReverseGeocodeResponse.ResultItems[0].Address,
+          addressDetails: mockReverseGeocodeResponse.ResultItems[0].Address,
         }),
       );
     });
