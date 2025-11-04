@@ -1,13 +1,13 @@
 import { memo, useId } from "react";
 import { getIncludeCountriesFilter } from "../../main";
-import { AddressFormData } from "../AddressForm";
 import { FormField } from "../FormField";
 import { Typeahead, TypeaheadOutput } from "../Typeahead";
 import { TypeaheadAPIName } from "../Typeahead/use-typeahead-query";
 import { useAddressFormContext } from "./AddressFormContext";
+import { Field } from "./AddressFormFields";
 
 export interface AddressFormAddressFieldProps {
-  name: keyof AddressFormData;
+  name: Field;
   label: string;
   showCurrentLocation: boolean;
   apiName: string | TypeaheadAPIName | null; // Using string so we can validate the value when using HTML form
@@ -29,6 +29,7 @@ export const AddressFormAddressField = memo(
         province: value.fullAddress?.Region?.Name,
         country: value.fullAddress?.Country?.Code2,
         originalPosition: value.position?.join(","),
+        additionalAddressData: value.fullAddress,
       });
 
       if (value.position) {

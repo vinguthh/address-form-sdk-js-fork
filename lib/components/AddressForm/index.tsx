@@ -1,4 +1,4 @@
-import type { AutocompleteFilterPlaceType } from "@aws-sdk/client-geo-places";
+import type { AutocompleteFilterPlaceType, Address } from "@aws-sdk/client-geo-places";
 import clsx from "clsx";
 import { ComponentProps, FormEventHandler, useState } from "react";
 import type { Config } from "../../types/config.ts";
@@ -25,6 +25,7 @@ export interface AddressFormData {
   country?: string;
   originalPosition?: string;
   adjustedPosition?: string;
+  additionalAddressData?: Address;
 }
 
 export type AddressFormField = {
@@ -106,6 +107,7 @@ export function AddressForm({
       country: formState.country ?? "",
       originalPosition: formState.originalPosition ?? "",
       adjustedPosition: formState.adjustedPosition ?? "",
+      additionalAddressData: formState.additionalAddressData,
     });
   };
 
@@ -127,6 +129,7 @@ export function AddressForm({
       province: value.fullAddress?.Region?.Name,
       country: value.fullAddress?.Country?.Code2,
       originalPosition: value.position ? positionToString(value.position) : "",
+      additionalAddressData: value.fullAddress,
     }));
 
     // Draw marker on map
@@ -152,6 +155,10 @@ export function AddressForm({
   };
 
   const register = (name: keyof AddressFormData): ComponentProps<"input"> => {
+    if (name === "additionalAddressData") {
+      return {};
+    }
+
     return {
       value: formState[name] ?? "",
       onChange: (e) => setFormState((state) => ({ ...state, [name]: e.target.value })),

@@ -8,7 +8,7 @@ import { AddressFormCountryField } from "./AddressFormCountryField";
 import { AddressFormTextField } from "./AddressFormTextField";
 import { getBoolean, getString } from "./utils";
 
-export const Field: Record<string, keyof AddressFormData> = {
+export const Field: Record<string, keyof Omit<AddressFormData, "additionalAddressData">> = {
   ADDRESS_LINE_ONE: "addressLineOne",
   ADDRESS_LINE_TWO: "addressLineTwo",
   CITY: "city",

@@ -1,11 +1,11 @@
 import { memo, useId } from "react";
-import { AddressFormData } from "../AddressForm";
 import { CountrySelect } from "../CountrySelect";
 import { FormField } from "../FormField";
 import { useAddressFormContext } from "./AddressFormContext";
+import { Field } from "./AddressFormFields";
 
 export interface AddressFormCountryFieldProps {
-  name: keyof AddressFormData;
+  name: Field;
   className?: string;
   label: string;
   placeholder?: string;
