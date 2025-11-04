@@ -7,15 +7,6 @@ import { TypeaheadProps } from "../Typeahead";
 import { AddressForm, AddressFormData, AddressFormProps } from "./index";
 import { defaultAddressFormFields } from "./form-field";
 
-const mockFullAddress = {
-  Country: { Code2: "CA", Name: "Canada" },
-  Region: { Name: "BC" },
-  Locality: "Vancouver",
-  PostalCode: "V6B 1Z6",
-  AddressNumber: "510",
-  Street: "W Georgia St",
-};
-
 vi.mock("../Map", () => ({
   Map: ({ children }: MapProps) => <div data-testid="map">{children}</div>,
 }));
@@ -28,10 +19,7 @@ vi.mock("../Typeahead", () => ({
   Typeahead: ({ id, onSelect, placeholder }: TypeaheadProps) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      onSelect({
-        addressLineOneField: value,
-        fullAddress: mockFullAddress,
-      });
+      onSelect({ addressLineOneField: value });
     };
 
     return <input data-testid={id} id={id} placeholder={placeholder} onChange={handleChange} />;
@@ -105,7 +93,6 @@ describe("AddressForm", () => {
       originalPosition: "",
       postalCode: "",
       province: "",
-      additionalAddressData: undefined,
     });
   });
 
@@ -159,38 +146,5 @@ describe("AddressForm", () => {
         adjustedPosition: "",
       }),
     );
-  });
-
-  it("includes additionalAddressData when typeahead selection is made", async () => {
-    vi.mocked(mockProps.onSubmit).mockClear();
-
-    renderWithProvider(<AddressForm typeahead={{ apiName: "autocomplete" }} {...mockProps} />);
-
-    // Simulate typeahead selection with full address data
-    const typeaheadInput = screen.getByTestId("aws-address-line-one");
-    fireEvent.change(typeaheadInput, { target: { value: "510 W Georgia St" } });
-
-    // Click the Submit button
-    const submitButton = screen.getByRole("button", { name: "Submit" });
-    fireEvent.click(submitButton);
-
-    expect(mockProps.onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({
-        additionalAddressData: mockFullAddress,
-      }),
-    );
-  });
-
-  it("makes sure that the invisible field additionalAddressData is not rendered", () => {
-    const { container } = renderWithProvider(<AddressForm typeahead={{ apiName: "autocomplete" }} {...mockProps} />);
-
-    // Access the AddressForm component instance to test the register function
-    // This tests the specific logic added for additionalAddressData field
-    const form = container.querySelector("form")!;
-    expect(form).toBeInTheDocument();
-
-    // The register function logic is tested indirectly through form behavior
-    // The additionalAddressData field should not create input props
-    expect(container.querySelector('[name="additionalAddressData"]')).not.toBeInTheDocument();
   });
 });
