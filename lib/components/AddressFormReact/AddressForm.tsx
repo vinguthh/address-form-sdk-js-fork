@@ -81,7 +81,7 @@ const AddressFormContent: FunctionComponent<AddressFormContentProps> = ({
   };
 
   const handleReset = () => {
-    context.setData({});
+    context.resetData?.();
   };
 
   return (

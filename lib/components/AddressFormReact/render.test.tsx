@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
+import { fireEvent, act } from "@testing-library/react";
 import { render } from "./render";
 
 describe("render", () => {
@@ -20,10 +21,12 @@ describe("render", () => {
     document.body.innerHTML = '<form id="test-form"></form>';
 
     expect(() => {
-      render({
-        root: "#test-form",
-        apiKey: "test-key",
-        region: "us-east-1",
+      act(() => {
+        render({
+          root: "#test-form",
+          apiKey: "test-key",
+          region: "us-east-1",
+        });
       });
     }).not.toThrow();
   });
@@ -42,10 +45,12 @@ describe("render", () => {
       </form>
     `;
 
-    render({
-      root: "#address-form",
-      apiKey: "test-key",
-      region: "us-east-1",
+    act(() => {
+      render({
+        root: "#address-form",
+        apiKey: "test-key",
+        region: "us-east-1",
+      });
     });
 
     // Verify form still exists (not replaced)
@@ -61,14 +66,18 @@ describe("render", () => {
       </form>
     `;
 
-    render({
-      root: "#address-form",
-      apiKey: "test-key",
-      region: "us-east-1",
+    act(() => {
+      render({
+        root: "#address-form",
+        apiKey: "test-key",
+        region: "us-east-1",
+      });
     });
 
     // Wait for React components to render
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
 
     // Verify React components are rendered with labels
     expect(document.body.textContent).toContain("Address");
@@ -106,14 +115,18 @@ describe("render", () => {
       resetButton: document.querySelector('button[type="reset"]'),
     };
 
-    render({
-      root: "#address-form",
-      apiKey: "test-key",
-      region: "us-east-1",
+    act(() => {
+      render({
+        root: "#address-form",
+        apiKey: "test-key",
+        region: "us-east-1",
+      });
     });
 
     // Wait for React components to render
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
 
     // Verify all original input nodes have been replaced
     expect(document.querySelector('input[name="addressLineOne"]')).not.toBe(originalNodes.addressLineOne);
@@ -134,5 +147,62 @@ describe("render", () => {
     expect(document.querySelector('input[name="province"]')).toBeInTheDocument();
     expect(document.querySelector('input[name="postalCode"]')).toBeInTheDocument();
     expect(document.querySelector('input[name="country"]')).toBeInTheDocument();
+  });
+
+  it("resets form data when Reset button is clicked", async () => {
+    document.body.innerHTML = `
+      <form id="address-form">
+        <input data-type="address-form" name="addressLineOne" />
+        <input data-type="address-form" name="addressLineTwo" />
+        <input data-type="address-form" name="city" />
+        <input data-type="address-form" name="province" />
+        <input data-type="address-form" name="postalCode" />
+        <button data-type="address-form" type="reset">Reset</button>
+      </form>
+    `;
+
+    act(() => {
+      render({
+        root: "#address-form",
+        apiKey: "test-key",
+        region: "us-east-1",
+      });
+    });
+
+    // Wait for React components to render
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+
+    const addressLineTwo = document.querySelector('input[name="addressLineTwo"]') as HTMLInputElement;
+    const city = document.querySelector('input[name="city"]') as HTMLInputElement;
+    const province = document.querySelector('input[name="province"]') as HTMLInputElement;
+    const postalCode = document.querySelector('input[name="postalCode"]') as HTMLInputElement;
+    const resetButton = document.querySelector('button[type="reset"]') as HTMLButtonElement;
+
+    // Populate all form fields with data
+    act(() => {
+      fireEvent.change(addressLineTwo, { target: { value: "Apartment 456" } });
+      fireEvent.change(city, { target: { value: "Vancouver" } });
+      fireEvent.change(province, { target: { value: "BC" } });
+      fireEvent.change(postalCode, { target: { value: "V6B 1Z6" } });
+    });
+
+    // Verify all fields have data
+    expect(addressLineTwo.value).toBe("Apartment 456");
+    expect(city.value).toBe("Vancouver");
+    expect(province.value).toBe("BC");
+    expect(postalCode.value).toBe("V6B 1Z6");
+
+    // Click reset button
+    act(() => {
+      fireEvent.click(resetButton);
+    });
+
+    // Verify all fields are cleared
+    expect(addressLineTwo.value).toBe("");
+    expect(city.value).toBe("");
+    expect(province.value).toBe("");
+    expect(postalCode.value).toBe("");
   });
 });

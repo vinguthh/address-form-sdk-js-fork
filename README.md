@@ -102,10 +102,10 @@ export default function App() {
             placeholder="Country"
           />
           <Flex direction="row">
-            <button address-form="submit">
+            <button data-type="address-form" type="submit">
               Submit
             </button>
-            <button address-form="reset">
+            <button data-type="address-form" type="reset">
               Reset
             </button>
           </Flex>
