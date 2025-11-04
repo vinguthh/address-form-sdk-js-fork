@@ -32,6 +32,7 @@ export const AddressFormProvider: FunctionComponent<AddressFormProps> = ({
       region,
       data,
       setData: (data: AddressFormData) => setData((state) => ({ ...state, ...data })),
+      resetData: () => setData({}),
       mapViewState,
       setMapViewState,
       language,
