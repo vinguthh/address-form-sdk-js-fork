@@ -93,7 +93,7 @@ export const CountrySelect = ({
         {...inputProps}
       />
 
-      <ComboboxOptions anchor="bottom" className={options} hidden={filteredCountries.length === 0}>
+      <ComboboxOptions anchor="bottom" className={options} hidden={filteredCountries.length === 0} modal={false}>
         {filteredCountries.map((country) => (
           <ComboboxOption
             key={country.code}
