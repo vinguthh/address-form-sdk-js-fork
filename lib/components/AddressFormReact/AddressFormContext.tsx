@@ -13,6 +13,7 @@ export interface AddressFormContextType {
   region: string;
   data: AddressFormData;
   setData: (data: AddressFormData) => void;
+  resetData?: () => void;
   mapViewState?: MapViewState;
   setMapViewState: (mapViewState: MapViewState) => void;
   language?: string;

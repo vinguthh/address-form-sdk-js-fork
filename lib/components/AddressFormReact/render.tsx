@@ -170,7 +170,7 @@ const FormEventHandler: FunctionComponent<{
   onSubmit?: (event: FormEvent & { data: AddressFormData }) => void;
   preventDefaultOnSubmit?: boolean;
 }> = ({ selector, onSubmit, preventDefaultOnSubmit = true }) => {
-  const { data, setData } = useAddressFormContext();
+  const { data, setData, resetData } = useAddressFormContext();
 
   useEffect(() => {
     const form = document.querySelector(selector) as HTMLFormElement;
@@ -187,7 +187,7 @@ const FormEventHandler: FunctionComponent<{
     };
 
     const handleReset = () => {
-      setData({});
+      resetData?.();
     };
 
     form.addEventListener("submit", handleSubmit);
@@ -197,7 +197,7 @@ const FormEventHandler: FunctionComponent<{
       form.removeEventListener("submit", handleSubmit);
       form.removeEventListener("reset", handleReset);
     };
-  }, [selector, data, setData, onSubmit, preventDefaultOnSubmit]);
+  }, [selector, data, setData, resetData, onSubmit, preventDefaultOnSubmit]);
 
   return null;
 };
