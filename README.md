@@ -132,41 +132,41 @@ export default function App() {
     <title>Address Form</title>
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js/address-form-sdk.css"
+      href="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js/dist/standalone/address-form-sdk.css"
     />
   </head>
   <body>
-    <form id="amazon-location-address-form" data-type="address-form">
-      <div data-type="address-form">
+    <form
+      id="amazon-location-address-form"
+      class="address-form flex-row flex-1"
+    >
+      <div class="flex-column">
         <input
           data-type="address-form"
           name="addressLineOne"
-          placeholder="Enter address"
-          data-api-name="autocomplete"
+          data-api-name="suggest"
+          data-show-current-location="true"
         />
         <input data-type="address-form" name="addressLineTwo" />
-        <input data-type="address-form" name="city" placeholder="City" />
-        <input
-          data-type="address-form"
-          name="province"
-          placeholder="State/Province"
-        />
+        <input data-type="address-form" name="city" />
+        <input data-type="address-form" name="province" />
         <input data-type="address-form" name="postalCode" />
-        <input data-type="address-form" name="country" placeholder="Country" />
-        <div data-type="address-form">
+        <input data-type="address-form" name="country" />
+        <div class="flex-row">
           <button data-type="address-form" type="submit">Submit</button>
           <button data-type="address-form" type="reset">Reset</button>
         </div>
       </div>
-      <div data-type="address-form-map" data-map-style="Standard,Light"></div>
+      <div data-type="address-form" data-map-style="Standard,Light"></div>
     </form>
-    <script src="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js/dist/standalone/address-form-sdk.umd.js"></script>
     <script>
-      AddressForm.render({
+      AddressFormSDK.render({
         root: "#amazon-location-address-form",
-        apiKey: AMAZON_LOCATION_API_KEY,
-        region: AMAZON_LOCATION_REGION,
-        onSubmit: (data) => console.log(data),
+        apiKey: "AMAZON_LOCATION_API_KEY",
+        region: "AMAZON_LOCATION_REGION",
+        showCurrentCountryResultsOnly: true,
+        onSubmit: (e) => console.log(e.data),
       });
     </script>
   </body>
@@ -235,22 +235,22 @@ Primary address input with autocomplete functionality.
 #### Submit Button
 
 ```html
-<button address-form="submit">Submit</button>
+<button data-type="address-form" type="submit">Submit</button>
 ```
 
 #### Reset Button
 
 ```html
-<button address-form="reset">Reset</button>
+<button data-type="address-form" type="reset">Reset</button>
 ```
 
 ### AddressFormMap
 
 Map component for displaying and adjusting address location.
 
-**React:** Map component for displaying and adjusting address location. `<AddressFormMap>`
+**React:** Map component for displaying and adjusting address location. `<AddressFormMap mapStyle={...}>`
 
-**HTML/JavaScript:** Map element for displaying and adjusting address location.`<div data-type="address-form-map">`
+**HTML/JavaScript:** Map element for displaying and adjusting address location.`<div data-type="address-form" data-map-style="...">`
 
 #### Props
 
