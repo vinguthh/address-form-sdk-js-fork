@@ -75,8 +75,6 @@ export function AddressForm({
   const AddressFormMapComponent = map?.component ?? AddressFormMap;
   const TypeaheadComponent = typeahead?.component ?? Typeahead;
 
-  const [typeaheadValue, setTypeaheadValue] = useState("");
-
   const getDefaultCenter = () => {
     if (map?.center) {
       return map.center;
@@ -140,7 +138,6 @@ export function AddressForm({
   };
 
   const handleResetFields = () => {
-    setTypeaheadValue("");
     setMarkerPosition(undefined);
     setFormState({});
   };
@@ -176,8 +173,8 @@ export function AddressForm({
                   <TypeaheadComponent
                     id={config.id}
                     name={config.id}
-                    value={typeaheadValue}
-                    onChange={setTypeaheadValue}
+                    value={formState.addressLineOne ?? ""}
+                    onChange={(addressLineOne) => setFormState((state) => ({ ...state, addressLineOne }))}
                     onSelect={handleTypeaheadSelect}
                     placeholder={config.placeholder}
                     showCurrentLocation={typeahead.showCurrentLocation}

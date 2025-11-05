@@ -147,4 +147,27 @@ describe("AddressForm", () => {
       }),
     );
   });
+
+  it("submits manually entered address line one without dropdown selection", async () => {
+    vi.mock("../Typeahead", () => ({
+      Typeahead: ({ id, onChange, placeholder }: TypeaheadProps) => {
+        return <input data-testid={id} id={id} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} />;
+      },
+    }));
+
+    const { getByLabelText, getByRole } = renderWithProvider(
+      <AddressForm typeahead={{ apiName: "autocomplete" }} {...mockProps} />,
+    );
+
+    // Type address without selecting from dropdown
+    await userEvent.type(getByLabelText("Address"), "123 Main Street");
+    // Verify the input has the typed value
+    expect(getByLabelText("Address")).toHaveValue("123 Main Street");
+    // Click the Submit button
+    await userEvent.click(getByRole("button", { name: "Submit" }));
+
+    // Verify onSubmit was called with the manually entered address
+    expect(mockProps.onSubmit).toHaveBeenCalledTimes(1);
+    expect(mockProps.onSubmit).toHaveBeenCalledWith(expect.objectContaining({ addressLineOne: "123 Main Street" }));
+  });
 });
