@@ -1,10 +1,11 @@
 import { GetPlaceCommandOutput } from "@aws-sdk/client-geo-places";
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProvider } from "../../test/utils";
 import * as api from "../../utils/api";
 import { Typeahead } from "./index";
+import { useState } from "react";
 
 vi.mock("../../utils/api", () => ({
   getPlace: vi.fn(),
@@ -247,38 +248,34 @@ describe("Typeahead Component", () => {
   });
 
   it("should pass language parameter to API calls", async () => {
-    let currentValue = "";
-    const mockOnChange = vi.fn((newValue: string) => {
-      currentValue = newValue;
-    });
+    const TestComponent = () => {
+      const [input, setInput] = useState("");
 
-    const TestComponent = () => (
-      <Typeahead
-        apiName="autocomplete"
-        apiInput={{ Language: "fr" }}
-        value={currentValue}
-        onChange={mockOnChange}
-        onSelect={mockProps.onSelect}
-      />
-    );
-
-    const { rerender } = renderWithProvider(<TestComponent />);
-    const input = screen.getByRole("combobox");
-
-    fireEvent.change(input, { target: { value: "test address" } });
-    currentValue = "test address";
-    rerender(<TestComponent />);
-
-    await waitFor(() => {
-      expect(api.autocomplete).toHaveBeenCalledWith(
-        expect.any(Object), // client object
-        expect.objectContaining({
-          QueryText: "test address",
-          Language: "fr",
-          MaxResults: 5,
-        }),
+      return (
+        <Typeahead
+          apiName="autocomplete"
+          apiInput={{ Language: "fr" }}
+          value={input}
+          onChange={setInput}
+          onSelect={mockProps.onSelect}
+        />
       );
+    };
+
+    const { getByRole } = renderWithProvider(<TestComponent />);
+
+    act(() => {
+      fireEvent.change(getByRole("combobox"), { target: { value: "123 Main St" } });
     });
+
+    expect(api.autocomplete).toHaveBeenCalledWith(
+      expect.any(Object), // client object
+      expect.objectContaining({
+        QueryText: "123 Main St",
+        Language: "fr",
+        MaxResults: 5,
+      }),
+    );
   });
 
   it("should pass biasPosition parameter to API calls", async () => {

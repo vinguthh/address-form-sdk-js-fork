@@ -10,17 +10,17 @@ export const AddressFormMap: FunctionComponent<AddressFormMapProps> = ({
   children,
   ...mapProps
 }) => {
-  const context = useAddressFormContext();
+  const { data, setData, mapViewState, setMapViewState } = useAddressFormContext();
 
   const handleSaveMarkerPosition = (markerPosition: [number, number]) => {
-    context.setData({ adjustedPosition: markerPosition.join(",") });
+    setData({ adjustedPosition: markerPosition.join(",") });
   };
 
   return (
-    <Map {...mapProps}>
+    <Map {...mapViewState} onMove={({ viewState }) => setMapViewState(viewState)} {...mapProps}>
       <MapMarker
         adjustablePosition={adjustablePosition}
-        markerPosition={parsePosition(context.data.adjustedPosition ?? context.data.originalPosition ?? "")}
+        markerPosition={parsePosition(data.adjustedPosition ?? data.originalPosition ?? "")}
         onSaveMarkerPosition={handleSaveMarkerPosition}
       />
       {children}
