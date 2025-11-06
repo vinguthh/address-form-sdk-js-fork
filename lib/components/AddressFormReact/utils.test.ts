@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getBoolean, getString } from "./utils";
+import { getBoolean, getString, parsePosition } from "./utils";
 
 describe("getBoolean", () => {
   it('returns true when property exists and is not "false"', () => {
@@ -28,5 +28,21 @@ describe("getString", () => {
   it("returns undefined when property does not exist", () => {
     expect(getString({}, "test")).toBeUndefined();
     expect(getString({ other: "value" }, "test")).toBeUndefined();
+  });
+});
+
+describe("parsePosition", () => {
+  it("returns tuple of numbers when valid position string", () => {
+    expect(parsePosition("10.5,20.3")).toEqual([10.5, 20.3]);
+    expect(parsePosition("0,0")).toEqual([0, 0]);
+    expect(parsePosition("-123.456,45.789")).toEqual([-123.456, 45.789]);
+  });
+
+  it("returns undefined when invalid position string", () => {
+    expect(parsePosition("")).toBeUndefined();
+    expect(parsePosition("10")).toBeUndefined();
+    expect(parsePosition("10,20,30")).toBeUndefined();
+    expect(parsePosition("abc,def")).toBeUndefined();
+    expect(parsePosition("10,abc")).toBeUndefined();
   });
 });

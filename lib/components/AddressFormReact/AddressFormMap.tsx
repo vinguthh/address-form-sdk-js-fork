@@ -2,6 +2,7 @@ import { FunctionComponent } from "react";
 import { Map, MapProps } from "../Map";
 import { MapMarker, MapMarkerProps } from "../MapMarker";
 import { useAddressFormContext } from "./AddressFormContext";
+import { parsePosition } from "./utils";
 
 export type AddressFormMapProps = MapProps & Pick<MapMarkerProps, "adjustablePosition">;
 
@@ -26,9 +27,4 @@ export const AddressFormMap: FunctionComponent<AddressFormMapProps> = ({
       {children}
     </Map>
   );
-};
-
-const parsePosition = (position: string): [number, number] => {
-  const [lng = 0, lat = 0] = position.split(",").map(Number);
-  return [lng, lat];
 };
