@@ -21,7 +21,7 @@ export interface TypeaheadResultItem {
 export const useTypeaheadQuery = ({ client, apiName, apiInput, enabled }: UseTypeaheadParams) => {
   return useQuery({
     enabled,
-    queryKey: ["typeahead", apiName, apiInput],
+    queryKey: ["typeahead", apiName, apiInput?.QueryText], // Only trigger calls if on query text change
     queryFn: () => {
       if (apiName === "autocomplete") {
         return getAutocompleteResults(client, {
