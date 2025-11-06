@@ -36,14 +36,14 @@ Include the following in your HTML code the CSS and JavaScript for the SDK
 ...
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js/address-form-sdk.css"
+    href="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js/dist/standalone/address-form-sdk.css"
   />
 ...
 </head>
 ...
 <body>
 ...
-  <script src="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js/dist/standalone/address-form-sdk.umd.js"></script>
 </body>
 ...
 ```
@@ -138,9 +138,9 @@ export default function App() {
   <body>
     <form
       id="amazon-location-address-form"
-      class="address-form flex-row flex-1"
+      class="aws-address-form aws-flex-row aws-flex-1"
     >
-      <div class="flex-column">
+      <div class="aws-flex-column">
         <input
           data-type="address-form"
           name="addressLineOne"
@@ -152,7 +152,7 @@ export default function App() {
         <input data-type="address-form" name="province" />
         <input data-type="address-form" name="postalCode" />
         <input data-type="address-form" name="country" />
-        <div class="flex-row">
+        <div class="aws-flex-row">
           <button data-type="address-form" type="submit">Submit</button>
           <button data-type="address-form" type="reset">Reset</button>
         </div>
