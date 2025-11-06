@@ -2,6 +2,7 @@ import { Address } from "@aws-sdk/client-geo-places";
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
+import { useRef } from "react";
 import useAmazonLocationContext from "../../hooks/use-amazon-location-context.ts";
 import { useDebounce } from "../../utils/debounce.ts";
 import { getPlaceQuery } from "../../utils/queries.ts";
@@ -52,12 +53,13 @@ const APITypeahead = ({
   const { client } = useAmazonLocationContext();
   const queryClient = useQueryClient();
   const isValid = debouncedValue.length >= 2;
+  const skipNextQueryRef = useRef(false);
 
   const { data = [], isLoading } = useTypeaheadQuery({
     client,
     apiName,
     apiInput: { QueryText: debouncedValue, MaxResults: 5, ...apiInput },
-    enabled: isValid,
+    enabled: isValid && !skipNextQueryRef.current,
   });
 
   const handleAddressSelect = async (address: TypeaheadResultItem | null) => {
@@ -82,6 +84,8 @@ const APITypeahead = ({
       ? [result.Address?.AddressNumber, result.Address?.Street].filter(Boolean).join(" ") || addressLineOneFallback
       : addressLineOneFallback;
 
+    skipNextQueryRef.current = true;
+
     onChange(addressLineOneField);
     onSelect({
       addressLineOneField,
@@ -89,12 +93,13 @@ const APITypeahead = ({
       position: result.Position ? [lng, lat] : undefined,
     });
 
-    // The user selected an address, we can clear the cache
-    queryClient.invalidateQueries({ queryKey: ["typeahead"] });
-    queryClient.invalidateQueries({ queryKey: ["getPlace"] });
+    // The user selected an address, we can clear the cache without refetching
+    queryClient.removeQueries({ queryKey: ["typeahead"] });
+    queryClient.removeQueries({ queryKey: ["getPlace"] });
   };
 
   const handleCurrentLocation = (address: TypeaheadOutput) => {
+    skipNextQueryRef.current = true;
     onChange(address.addressLineOneField ?? "");
     onSelect(address);
   };
@@ -108,7 +113,10 @@ const APITypeahead = ({
           name={name}
           placeholder={placeholder}
           value={value}
-          onChange={(event) => onChange(event.target.value)}
+          onChange={(event) => {
+            skipNextQueryRef.current = false;
+            onChange(event.target.value);
+          }}
           className={input}
           autoComplete="off"
         />
