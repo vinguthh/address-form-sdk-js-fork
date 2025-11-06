@@ -1,5 +1,5 @@
 import { memo, useId } from "react";
-import { getIncludeCountriesFilter } from "../../main";
+import { getIncludeCountriesFilter } from "../../utils/country-filter";
 import { FormField } from "../FormField";
 import { Typeahead, TypeaheadOutput } from "../Typeahead";
 import { TypeaheadAPIName } from "../Typeahead/use-typeahead-query";
