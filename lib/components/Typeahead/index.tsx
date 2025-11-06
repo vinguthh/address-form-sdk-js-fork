@@ -117,29 +117,33 @@ const APITypeahead = ({
           <ComboboxOptions
             transition
             anchor="bottom start"
-            className={options}
+            className={clsx(options, "aws-typeahead-results")}
             data-testid={`aws-typeahead-results-${apiName}`}
             modal={false}
           >
             {isLoading && (
-              <ComboboxOption value={null} className={info} disabled>
+              <ComboboxOption value={null} className={clsx(info, "aws-typeahead-results__loading")} disabled>
                 Loading...
               </ComboboxOption>
             )}
 
             {data.length === 0 && !isLoading && (
-              <ComboboxOption value={null} className={info} disabled>
+              <ComboboxOption value={null} className={clsx(info, "aws-typeahead-results__no-results")} disabled>
                 No results
               </ComboboxOption>
             )}
 
             {data.map((results) => (
-              <ComboboxOption key={results.placeId} value={results} className={option}>
+              <ComboboxOption
+                key={results.placeId}
+                value={results}
+                className={clsx(option, "aws-typeahead-results__option")}
+              >
                 {results.title}
               </ComboboxOption>
             ))}
 
-            <ComboboxOption value={null} className={brandOption} disabled>
+            <ComboboxOption value={null} className={clsx(brandOption, "aws-typeahead-results__brand")} disabled>
               <a className={brandOptionLink} href="https://aws.amazon.com/location/" target="_blank" rel="noreferrer">
                 Powered by Amazon Location
               </a>

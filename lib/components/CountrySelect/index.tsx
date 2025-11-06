@@ -98,7 +98,7 @@ export const CountrySelect = ({
           <ComboboxOption
             key={country.code}
             value={country}
-            className={clsx(option, isSelected(country) && styles.selected)}
+            className={clsx(option, "aws-country-select__option", isSelected(country) && styles.selected)}
           >
             {country.name}
           </ComboboxOption>
