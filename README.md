@@ -177,6 +177,23 @@ export default function App() {
 
 The form is fully customizable - add, remove, or rearrange elements as needed for your use case. Replace the `Flex` component with your own CSS framework or custom styling. You can control other functionalities of the address form through the component props/attributes. See the [API Reference](#api-reference) for complete customization options.
 
+### Supported Countries
+
+The Address Form SDK supports address autofill worldwide through Amazon Location Service. The following countries have full support with address field parsing, where each address component is populated into its respective field:
+
+- Australia
+- Canada
+- France
+- Hong Kong
+- Ireland
+- New Zealand
+- Philippines
+- Singapore
+- United Kingdom
+- United States
+
+Other countries are in Preview, where the `addressLineOne` field displays the complete address instead of just the street address portion. Future releases will improve this behavior.
+
 ## API Reference
 
 ### AddressForm
@@ -187,17 +204,17 @@ The form is fully customizable - add, remove, or rearrange elements as needed fo
 
 #### Props
 
-| Property                        | Type                            | Required | Default | Description                                                                |
-| ------------------------------- | ------------------------------- | -------- | ------- | -------------------------------------------------------------------------- |
-| `apiKey`                        | `string`                        | Yes      | -       | The Amazon Location Service API key used to authenticate requests          |
-| `region`                        | `string`                        | Yes      | -       | The AWS region where Amazon Location Service is called (e.g., "us-east-1") |
-| `preventDefaultOnSubmit`        | `boolean`                       | No       | `false` | Prevents the default form submission behavior when set to true             |
-| `language`                      | `string`                        | No       | -       | Language code for localized address suggestions (e.g., "en", "es")         |
-| `politicalView`                 | `string`                        | No       | -       | Political view for address results, affecting disputed territories display |
-| `showCurrentCountryResultsOnly` | `boolean`                       | No       | `false` | Limits autocomplete results to the currently selected country only         |
-| `allowedCountries`              | `string[]`                      | No       | -       | Array of ISO country codes to restrict address suggestions                 |
-| `placeTypes`                    | `AutocompleteFilterPlaceType[]` | No       | -       | Array of place types to filter results (e.g., "Locality", "PostalCode")    |
-| `onSubmit`                      | `(data) => void`                | No       | -       | Callback function triggered on form submission                             |
+| Property                        | Type                            | Required | Default | Description                                                                                                          |
+| ------------------------------- | ------------------------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| `apiKey`                        | `string`                        | Yes      | -       | The Amazon Location Service API key used to authenticate requests                                                    |
+| `region`                        | `string`                        | Yes      | -       | The AWS region where Amazon Location Service is called (e.g., "us-east-1")                                           |
+| `preventDefaultOnSubmit`        | `boolean`                       | No       | `false` | Prevents the default form submission behavior when set to true                                                       |
+| `language`                      | `string`                        | No       | -       | Language code for localized address suggestions (e.g., "en", "es")                                                   |
+| `politicalView`                 | `string`                        | No       | -       | Political view for address results, affecting disputed territories display                                           |
+| `showCurrentCountryResultsOnly` | `boolean`                       | No       | `false` | Limits autofill results to the currently selected country only                                                       |
+| `allowedCountries`              | `string[]`                      | No       | -       | Array of ISO country codes to restrict address suggestions (see [countries.ts](lib/data/countries.ts) for reference) |
+| `placeTypes`                    | `AutocompleteFilterPlaceType[]` | No       | -       | Array of place types to filter results (e.g., "Locality", "PostalCode")                                              |
+| `onSubmit`                      | `(data) => void`                | No       | -       | Callback function triggered on form submission                                                                       |
 
 #### Form Submission Data
 
@@ -231,7 +248,7 @@ All input fields use the `data-type="address-form"` attribute along with a `name
 
 #### Address Line One (`name="addressLineOne"`)
 
-Primary address input with autocomplete functionality.
+Primary address input with autofill functionality. See [Supported Countries](#supported-countries) for information about address field parsing behavior in different countries.
 
 | Property                     | Type     | Default         | Description                           |
 | ---------------------------- | -------- | --------------- | ------------------------------------- |
