@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { fireEvent, act } from "@testing-library/react";
+import { fireEvent, act, waitFor } from "@testing-library/react";
 import { render } from "./render";
 
 describe("render", () => {
@@ -74,13 +74,12 @@ describe("render", () => {
       });
     });
 
-    // Wait for React components to render
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    // Wait for React components to render using waitFor
+    await waitFor(() => {
+      expect(document.body.textContent).toContain("Address");
     });
 
     // Verify React components are rendered with labels
-    expect(document.body.textContent).toContain("Address");
     expect(document.body.textContent).toContain("Address Line 2");
     expect(document.body.textContent).toContain("City");
 
@@ -123,9 +122,11 @@ describe("render", () => {
       });
     });
 
-    // Wait for React components to render
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    // Wait for React components to replace the first DOM node
+    await waitFor(() => {
+      const newElement = document.querySelector('input[name="addressLineOne"]');
+      expect(newElement).toBeInTheDocument();
+      expect(newElement).not.toBe(originalNodes.addressLineOne);
     });
 
     // Verify all original input nodes have been replaced
@@ -170,8 +171,8 @@ describe("render", () => {
     });
 
     // Wait for React components to render
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    await waitFor(() => {
+      expect(document.querySelector('input[name="addressLineTwo"]')).toBeInTheDocument();
     });
 
     const addressLineTwo = document.querySelector('input[name="addressLineTwo"]') as HTMLInputElement;

@@ -8,7 +8,11 @@ import { AddressForm, AddressFormData, AddressFormProps } from "./index";
 import { defaultAddressFormFields } from "./form-field";
 
 vi.mock("../Map", () => ({
-  Map: ({ children }: MapProps) => <div data-testid="map">{children}</div>,
+  Map: ({ children, zoom }: MapProps) => (
+    <div data-testid="map" data-zoom={zoom}>
+      {children}
+    </div>
+  ),
 }));
 
 vi.mock("../MapMarker", () => ({
@@ -169,5 +173,49 @@ describe("AddressForm", () => {
     // Verify onSubmit was called with the manually entered address
     expect(mockProps.onSubmit).toHaveBeenCalledTimes(1);
     expect(mockProps.onSubmit).toHaveBeenCalledWith(expect.objectContaining({ addressLineOne: "123 Main Street" }));
+  });
+
+  describe("Zoom Level Behavior", () => {
+    it("uses default zoom level of 1 when no center is provided", () => {
+      renderWithProvider(<AddressForm typeahead={{ apiName: "autocomplete" }} {...mockProps} />);
+      const map = screen.getByTestId("map");
+      expect(map).toHaveAttribute("data-zoom", "1");
+    });
+
+    it("uses default zoom level of 5 when center is provided", () => {
+      renderWithProvider(
+        <AddressForm typeahead={{ apiName: "autocomplete" }} map={{ center: [-123.1207, 49.2827] }} {...mockProps} />,
+      );
+      const map = screen.getByTestId("map");
+      expect(map).toHaveAttribute("data-zoom", "5");
+    });
+
+    it("uses custom zoom level when explicitly specified", () => {
+      renderWithProvider(
+        <AddressForm
+          typeahead={{ apiName: "autocomplete" }}
+          map={{ center: [-123.1207, 49.2827], zoom: 10 }}
+          {...mockProps}
+        />,
+      );
+      const map = screen.getByTestId("map");
+      expect(map).toHaveAttribute("data-zoom", "10");
+    });
+
+    it("uses custom zoom level even without center", () => {
+      renderWithProvider(<AddressForm typeahead={{ apiName: "autocomplete" }} map={{ zoom: 8 }} {...mockProps} />);
+      const map = screen.getByTestId("map");
+      expect(map).toHaveAttribute("data-zoom", "8");
+    });
+
+    it("uses default zoom level of 5 when single allowed country provides center", () => {
+      renderWithProvider(
+        <AddressForm typeahead={{ apiName: "autocomplete", allowedCountries: ["CA"] }} {...mockProps} />,
+      );
+      const map = screen.getByTestId("map");
+      // When a single country is in allowedCountries, it uses that country's position
+      // which means center is defined, so zoom should be 5
+      expect(map).toHaveAttribute("data-zoom", "5");
+    });
   });
 });

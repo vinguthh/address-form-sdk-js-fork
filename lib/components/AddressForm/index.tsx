@@ -56,6 +56,7 @@ export interface AddressFormProps {
       showAdjustPosition?: boolean;
       hide?: boolean;
       center?: number[];
+      zoom?: number;
     }
   >;
   className?: string;
@@ -85,9 +86,17 @@ export function AddressForm({
     }
   };
 
+  const getDefaultZoom = (center?: number[]) => {
+    if (map?.zoom) {
+      return map.zoom;
+    }
+
+    return center ? 5 : 1;
+  };
+
   const [viewState, setViewState] = useState(() => {
     const center = getDefaultCenter();
-    return { longitude: center?.[0] ?? -100, latitude: center?.[1] ?? 50, zoom: center ? 5 : 1 };
+    return { longitude: center?.[0] ?? -100, latitude: center?.[1] ?? 50, zoom: getDefaultZoom(center) };
   });
 
   const [markerPosition, setMarkerPosition] = useState<[number, number]>();
