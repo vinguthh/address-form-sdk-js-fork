@@ -24,7 +24,7 @@ export const AddressFormProvider: FunctionComponent<AddressFormProps> = ({
   placeTypes,
 }) => {
   const [data, setData] = useState<AddressFormData>({});
-  const [mapViewState, setMapViewState] = useState<MapViewState>();
+  const [mapViewState, setMapViewState] = useState<MapViewState>({ longitude: 0, latitude: 0, zoom: 1 });
 
   const context = useMemo<AddressFormContextType>(
     () => ({
