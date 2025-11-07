@@ -11,6 +11,7 @@ vi.mock("../../utils/api", () => ({
   getPlace: vi.fn(),
   autocomplete: vi.fn(),
   suggest: vi.fn(),
+  reverseGeocode: vi.fn(),
 }));
 
 vi.mock("../../utils/debounce", () => ({
@@ -432,5 +433,130 @@ describe("Typeahead Component", () => {
         position: [12.32681, 45.44152],
       });
     });
+  });
+
+  it("should not make additional autocomplete calls after selecting an address from dropdown", async () => {
+    let currentValue = "";
+    const mockOnChange = vi.fn((newValue: string) => {
+      currentValue = newValue;
+    });
+    const mockOnSelect = vi.fn();
+
+    vi.mocked(api.autocomplete).mockResolvedValue({
+      ResultItems: [
+        {
+          PlaceId: "place-1",
+          Title: "123 Main St",
+          Address: { Label: "123 Main St" },
+          PlaceType: "Street",
+        },
+      ],
+      PricingBucket: "bucket1",
+      $metadata: {},
+    });
+
+    const TestComponent = () => (
+      <Typeahead apiName="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockOnSelect} />
+    );
+
+    const { rerender } = renderWithProvider(<TestComponent />);
+    const input = screen.getByRole("combobox");
+
+    // User types to trigger autocomplete
+    fireEvent.change(input, { target: { value: "123 Main" } });
+    currentValue = "123 Main";
+    rerender(<TestComponent />);
+
+    await waitFor(() => {
+      expect(screen.getByText("123 Main St")).toBeInTheDocument();
+    });
+
+    vi.mocked(api.autocomplete).mockClear();
+
+    // User selects an address from dropdown
+    const option = screen.getByRole("option", { name: "123 Main St" });
+    await userEvent.click(option);
+
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalled();
+    });
+
+    currentValue = "123 Mock St";
+    rerender(<TestComponent />);
+
+    const DEBOUNCE_WAIT_MS = 100;
+    await new Promise((resolve) => setTimeout(resolve, DEBOUNCE_WAIT_MS));
+
+    // Verify no additional autocomplete calls after selection
+    expect(api.autocomplete).not.toHaveBeenCalled();
+  });
+
+  it("should not make additional autocomplete calls after clicking locate button", async () => {
+    let currentValue = "";
+    const mockOnChange = vi.fn((newValue: string) => {
+      currentValue = newValue;
+    });
+    const mockOnSelect = vi.fn();
+
+    const mockGeolocation = {
+      getCurrentPosition: vi.fn((success) => {
+        success({
+          coords: {
+            latitude: 47.6062,
+            longitude: -122.3321,
+          },
+        });
+      }),
+    };
+    Object.defineProperty(global.navigator, "geolocation", {
+      value: mockGeolocation,
+      writable: true,
+      configurable: true,
+    });
+
+    vi.mocked(api.reverseGeocode).mockResolvedValue({
+      ResultItems: [
+        {
+          PlaceId: "current-location-place",
+          Title: "Current Location Address",
+          Address: { Label: "Current Location Address" },
+          PlaceType: "Street",
+        },
+      ],
+      PricingBucket: "bucket1",
+      $metadata: {},
+    });
+
+    const TestComponent = () => (
+      <Typeahead
+        apiName="autocomplete"
+        value={currentValue}
+        onChange={mockOnChange}
+        onSelect={mockOnSelect}
+        showCurrentLocation={true}
+      />
+    );
+
+    const { rerender } = renderWithProvider(<TestComponent />);
+
+    vi.mocked(api.autocomplete).mockClear();
+
+    // User clicks the locate button
+    const locateButton = screen.getByTestId("aws-current-location");
+    await userEvent.click(locateButton);
+
+    await waitFor(() => {
+      expect(mockOnChange).toHaveBeenCalled();
+    });
+
+    const newAddress = mockOnChange.mock.calls[mockOnChange.mock.calls.length - 1][0];
+    currentValue = newAddress;
+    rerender(<TestComponent />);
+
+    const DEBOUNCE_WAIT_MS = 100;
+    await new Promise((resolve) => setTimeout(resolve, DEBOUNCE_WAIT_MS));
+
+    // Verify no autocomplete calls after using locate button
+    expect(api.autocomplete).not.toHaveBeenCalled();
   });
 });
