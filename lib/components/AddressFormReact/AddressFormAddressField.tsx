@@ -35,7 +35,7 @@ export const AddressFormAddressField = memo(
       if (value.position) {
         const [longitude, latitude] = value.position;
         context.setMapViewState({ longitude, latitude, zoom: 15 });
-        context.setData({ originalPosition: [longitude, latitude].join(",") });
+        context.setData({ originalPosition: [longitude, latitude].join(","), adjustedPosition: undefined });
       }
     };
 
