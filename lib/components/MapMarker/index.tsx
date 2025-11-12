@@ -1,15 +1,22 @@
 import { useRef, useState } from "react";
 import { Marker } from "react-map-gl/maplibre";
-import { Button } from "../Button/index.tsx";
-import { styleAdjustButtons, styleAdjustMarker, styleButton } from "./styles.css.ts";
+import { AdjustButton } from "./AdjustButton";
+import { buttons } from "./styles.css.ts";
+import { ColorScheme } from "../Map/index.tsx";
 
 export interface MapMarkerProps {
   adjustablePosition?: boolean;
   markerPosition?: [number, number];
   onSaveMarkerPosition?: (position: [number, number]) => void;
+  colorScheme?: ColorScheme;
 }
 
-export function MapMarker({ adjustablePosition = true, markerPosition, onSaveMarkerPosition }: MapMarkerProps) {
+export function MapMarker({
+  adjustablePosition = true,
+  markerPosition,
+  onSaveMarkerPosition,
+  colorScheme,
+}: MapMarkerProps) {
   const markerRef = useRef<maplibregl.Marker>(null);
   const [isAdjustMode, setIsAdjustMode] = useState(false);
 
@@ -34,25 +41,19 @@ export function MapMarker({ adjustablePosition = true, markerPosition, onSaveMar
 
   if (markerPosition) {
     return (
-      <div className={styleAdjustMarker}>
+      <>
         {adjustablePosition && (
-          <>
+          <div className={buttons}>
             {isAdjustMode ? (
-              <div className={styleAdjustButtons}>
-                <Button className={styleButton} size="small" onClick={handleSaveMarkerPosition}>
-                  Set location
-                </Button>
+              <>
+                <AdjustButton onClick={handleSaveMarkerPosition}>Set location</AdjustButton>
 
-                <Button className={styleButton} size="small" variant="secondary" onClick={handleCancelAdjustMarker}>
-                  Cancel
-                </Button>
-              </div>
+                <AdjustButton onClick={handleCancelAdjustMarker}>Cancel</AdjustButton>
+              </>
             ) : (
-              <Button className={styleButton} size="small" onClick={handleAdjustMarker}>
-                Adjust marker
-              </Button>
+              <AdjustButton onClick={handleAdjustMarker}>Adjust marker</AdjustButton>
             )}
-          </>
+          </div>
         )}
 
         <Marker
@@ -60,10 +61,10 @@ export function MapMarker({ adjustablePosition = true, markerPosition, onSaveMar
           longitude={markerPosition[0]}
           latitude={markerPosition[1]}
           anchor="bottom"
-          color="black"
+          color={colorScheme === "Light" ? "#000" : "#ddd"}
           ref={markerRef}
         />
-      </div>
+      </>
     );
   }
 }

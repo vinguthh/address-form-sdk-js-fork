@@ -3,6 +3,7 @@ import { Map, MapProps } from "../Map";
 import { MapMarker, MapMarkerProps } from "../MapMarker";
 import { useAddressFormContext } from "./AddressFormContext";
 import { parsePosition } from "./utils";
+import { getColorScheme } from "../Map/utils";
 
 export type AddressFormMapProps = MapProps & Pick<MapMarkerProps, "adjustablePosition">;
 
@@ -23,6 +24,7 @@ export const AddressFormMap: FunctionComponent<AddressFormMapProps> = ({
         adjustablePosition={adjustablePosition}
         markerPosition={parsePosition(data.adjustedPosition ?? data.originalPosition ?? "")}
         onSaveMarkerPosition={handleSaveMarkerPosition}
+        colorScheme={getColorScheme(mapProps.mapStyle)}
       />
       {children}
     </Map>

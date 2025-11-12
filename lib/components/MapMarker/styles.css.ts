@@ -1,16 +1,10 @@
 import { style } from "@vanilla-extract/css";
 
-export const styleAdjustMarker = style({
+export const buttons = style({
   position: "absolute",
-  top: "0.5rem",
-  marginLeft: "0.5rem",
-});
-
-export const styleAdjustButtons = style({
+  top: 0,
+  left: 0,
+  margin: "10px 0px 0px 10px", // Matches MapLibre CSS for control/navigation buttons
   display: "flex",
   gap: "0.5rem",
-});
-
-export const styleButton = style({
-  boxShadow: "0 0 2px 2px rgba(0,0,0,0.1)",
 });
