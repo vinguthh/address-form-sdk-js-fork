@@ -2,7 +2,7 @@ import { Address } from "@aws-sdk/client-geo-places";
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import useAmazonLocationContext from "../../hooks/use-amazon-location-context.ts";
 import { useDebounce } from "../../utils/debounce.ts";
 import { getPlaceQuery } from "../../utils/queries.ts";
@@ -30,6 +30,7 @@ export interface TypeaheadProps {
   onSelect: (value: TypeaheadOutput) => void;
   showCurrentLocation?: boolean;
   debounce?: number;
+  skipNextQuery?: boolean;
 }
 
 export const Typeahead = ({ apiName, ...props }: TypeaheadProps) => {
@@ -48,12 +49,19 @@ const APITypeahead = ({
   onSelect,
   showCurrentLocation = true,
   debounce = 300,
+  skipNextQuery,
 }: TypeaheadProps & { apiName: TypeaheadAPIName }) => {
   const debouncedValue = useDebounce(value, debounce);
   const { client } = useAmazonLocationContext();
   const queryClient = useQueryClient();
   const isValid = debouncedValue.length >= 2;
   const skipNextQueryRef = useRef(false);
+
+  useEffect(() => {
+    if (skipNextQuery !== undefined) {
+      skipNextQueryRef.current = skipNextQuery;
+    }
+  }, [skipNextQueryRef, skipNextQuery]);
 
   const { data = [], isLoading } = useTypeaheadQuery({
     client,
@@ -98,6 +106,14 @@ const APITypeahead = ({
     queryClient.removeQueries({ queryKey: ["getPlace"] });
   };
 
+  useEffect(() => {
+    if (value.length > 1) {
+      // Remove leading space added in onClose to trigger re-render for autofilled values
+      onChange(value.trimStart());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Removed: `onChange`
+  }, [value]);
+
   const handleCurrentLocation = (address: TypeaheadOutput) => {
     skipNextQueryRef.current = true;
     onChange(address.addressLineOneField ?? "");
@@ -106,7 +122,15 @@ const APITypeahead = ({
 
   return (
     <div className={clsx(className, base)}>
-      <Combobox onChange={handleAddressSelect}>
+      <Combobox
+        onChange={handleAddressSelect}
+        onClose={() => {
+          if (value) {
+            // Prepend space to trigger re-render since Combobox doesn't handle autofilled values without user interaction
+            onChange(` ${value}`);
+          }
+        }}
+      >
         <ComboboxInput
           as={Input}
           id={id}
