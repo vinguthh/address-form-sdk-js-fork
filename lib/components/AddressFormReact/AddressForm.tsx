@@ -1,4 +1,4 @@
-import { AutocompleteFilterPlaceType } from "@aws-sdk/client-geo-places";
+import { Address, AutocompleteFilterPlaceType } from "@aws-sdk/client-geo-places";
 import clsx from "clsx";
 import {
   ComponentProps,
@@ -10,7 +10,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { AddressFormData } from "../AddressForm";
 import { AddressFormAddressField, AddressFormAddressFieldProps } from "./AddressFormAddressField";
 import { AddressFormAutofillHandler } from "./AddressFormAutofillHandler";
 import { useAddressFormContext } from "./AddressFormContext";
@@ -20,6 +19,18 @@ import { AddressFormMap, AddressFormMapProps } from "./AddressFormMap";
 import { AddressFormProvider } from "./AddressFormProvider";
 import { AddressFormTextField, AddressFormTextFieldProps } from "./AddressFormTextField";
 import * as styles from "./styles.css";
+
+export interface AddressFormData {
+  addressLineOne?: string;
+  addressLineTwo?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  country?: string;
+  originalPosition?: string;
+  adjustedPosition?: string;
+  addressDetails?: Address;
+}
 
 export interface AddressFormProps extends AddressFormContentProps {
   apiKey: string;

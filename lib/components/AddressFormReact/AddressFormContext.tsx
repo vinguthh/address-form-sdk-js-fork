@@ -1,6 +1,6 @@
 import { AutocompleteFilterPlaceType } from "@aws-sdk/client-geo-places";
 import { createContext, useContext } from "react";
-import { AddressFormData } from "../AddressForm";
+import type { AddressFormData } from "./AddressForm";
 import { TypeaheadAPIName } from "../Typeahead/use-typeahead-query";
 
 export interface MapViewState {
