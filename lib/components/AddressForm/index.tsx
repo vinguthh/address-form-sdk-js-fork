@@ -13,7 +13,7 @@ import { Typeahead, TypeaheadOutput, TypeaheadProps } from "../Typeahead";
 import { TypeaheadAPIName } from "../Typeahead/use-typeahead-query.ts";
 import * as styles from "./styles.css.ts";
 import { positionToString } from "../../utils/position.ts";
-import { countries } from "../../main.tsx";
+import { countries, getColorScheme } from "../../main.tsx";
 import { defaultAddressFormFields, FormFieldID } from "./form-field.ts";
 
 export interface AddressFormData {
@@ -275,6 +275,7 @@ export const AddressFormMap = ({
         adjustablePosition={adjustablePosition}
         markerPosition={markerPosition}
         onSaveMarkerPosition={onSaveMarkerPosition}
+        colorScheme={getColorScheme(mapProps.mapStyle)}
       />
     </Map>
   );
