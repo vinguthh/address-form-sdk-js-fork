@@ -1,24 +1,35 @@
-export { AddressForm, AddressFormMap } from "./components/AddressForm";
-export { defaultAddressFormFields, FormFieldID } from "./components/AddressForm/form-field";
-export { AddressForm as AddressFormReact } from "./components/AddressFormReact/AddressForm";
-export { CountrySelect } from "./components/CountrySelect";
-export type { CountrySelectProps } from "./components/CountrySelect";
-export type {
-  AddressFormProps,
-  AddressFormMapProps,
-  AddressFormField,
-  AddressFormData,
-} from "./components/AddressForm";
+// Components
+export { AddressForm, type AddressFormData } from "./components/AddressFormReact";
 export { AmazonLocationProvider } from "./components/AmazonLocationProvider";
 export { Button } from "./components/Button";
+export { CountrySelect, type CountrySelectProps } from "./components/CountrySelect";
+export { Flex } from "./components/Flex";
 export { FormField } from "./components/FormField";
 export { Input } from "./components/Input";
 export { LocateButton } from "./components/LocateButton";
-export { Map } from "./components/Map";
-export { getMapStyleType, getColorScheme } from "./components/Map/utils";
-export type { ColorScheme } from "./components/Map";
+export { Map, type ColorScheme } from "./components/Map";
 export { MapMarker } from "./components/MapMarker";
 export { Typeahead } from "./components/Typeahead";
+
+// Utils
 export { getIncludeCountriesFilter } from "./utils/country-filter";
+export { getMapStyleType, getColorScheme } from "./components/Map/utils";
+
+// Data
 export { countries } from "./data/countries";
+
+// Styles
 import "maplibre-gl/dist/maplibre-gl.css";
+
+// Legacy exports - deprecated, use components from AddressFormReact instead
+export { AddressForm as __AddressForm, AddressFormMap as __AddressFormMap } from "./components/AddressForm";
+export {
+  defaultAddressFormFields as __defaultAddressFormFields,
+  FormFieldID as __FormFieldID,
+} from "./components/AddressForm/form-field";
+export type {
+  AddressFormProps as __AddressFormProps,
+  AddressFormMapProps as __AddressFormMapProps,
+  AddressFormField as __AddressFormField,
+  AddressFormData as __AddressFormData,
+} from "./components/AddressForm";

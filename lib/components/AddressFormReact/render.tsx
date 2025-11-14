@@ -1,7 +1,7 @@
 import { AutocompleteFilterPlaceType } from "@aws-sdk/client-geo-places";
 import { FormEvent, FunctionComponent, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { AddressFormData } from "../AddressForm";
+import type { AddressFormData } from "./AddressForm";
 import { AmazonLocationProvider } from "../AmazonLocationProvider";
 import { ComponentInjector } from "../ComponentInjector";
 import { AddressFormAddressField } from "./AddressFormAddressField";
