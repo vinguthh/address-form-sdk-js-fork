@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { AddressForm, defaultAddressFormFields } from "../../lib/main";
+import { __AddressForm as AddressForm, __defaultAddressFormFields as defaultAddressFormFields } from "../../lib/main";
 import { action } from "@storybook/addon-actions";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
