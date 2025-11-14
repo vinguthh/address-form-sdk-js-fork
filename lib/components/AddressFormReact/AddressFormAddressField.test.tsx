@@ -24,6 +24,10 @@ const mockContextValue: AddressFormContextType = {
   data: { addressLineOne: "123 Main St", country: "US" },
   setData: mockSetData,
   setMapViewState: mockSetMapViewState,
+  isAutofill: false,
+  setIsAutofill: vi.fn(),
+  typeaheadApiName: "autocomplete",
+  setTypeaheadApiName: vi.fn(),
 };
 
 describe("AddressFormAddressField", () => {

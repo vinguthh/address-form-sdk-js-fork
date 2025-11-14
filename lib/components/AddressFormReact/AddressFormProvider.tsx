@@ -2,6 +2,7 @@ import { AutocompleteFilterPlaceType } from "@aws-sdk/client-geo-places";
 import { FunctionComponent, PropsWithChildren, useMemo, useState } from "react";
 import { AddressFormData } from "../AddressForm";
 import { AddressFormContext, AddressFormContextType, MapViewState } from "./AddressFormContext";
+import { TypeaheadAPIName } from "../Typeahead/use-typeahead-query";
 
 export interface AddressFormProps extends PropsWithChildren {
   apiKey: string;
@@ -24,7 +25,9 @@ export const AddressFormProvider: FunctionComponent<AddressFormProps> = ({
   placeTypes,
 }) => {
   const [data, setData] = useState<AddressFormData>({});
+  const [isAutofill, setIsAutofill] = useState(false);
   const [mapViewState, setMapViewState] = useState<MapViewState>({ longitude: 0, latitude: 0, zoom: 1 });
+  const [typeaheadApiName, setTypeaheadApiName] = useState<TypeaheadAPIName | null>(null);
 
   const context = useMemo<AddressFormContextType>(
     () => ({
@@ -40,17 +43,23 @@ export const AddressFormProvider: FunctionComponent<AddressFormProps> = ({
       showCurrentCountryResultsOnly,
       allowedCountries,
       placeTypes,
+      isAutofill,
+      setIsAutofill,
+      typeaheadApiName,
+      setTypeaheadApiName,
     }),
     [
-      allowedCountries,
       apiKey,
-      data,
-      language,
-      mapViewState,
-      placeTypes,
-      politicalView,
       region,
+      data,
+      mapViewState,
+      language,
+      politicalView,
       showCurrentCountryResultsOnly,
+      allowedCountries,
+      placeTypes,
+      isAutofill,
+      typeaheadApiName,
     ],
   );
 
