@@ -1,6 +1,6 @@
 import { GeoPlacesClient } from "@aws-sdk/client-geo-places";
 import { QueryClient, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useEffectEvent } from "react";
+import { useEffect, useRef } from "react";
 import useAmazonLocationContext from "../../hooks/use-amazon-location-context";
 import { AutofillValues, detectAutofill } from "../../utils/detect-autofill";
 import { autocompleteQuery, getPlaceQuery, suggestQuery } from "../../utils/queries";
@@ -16,8 +16,9 @@ export const AddressFormAutofillHandler = ({ form }: AddressFormAutofillHandlerP
   const { client } = useAmazonLocationContext();
   const { mapViewState, setMapViewState, setData, setIsAutofill, typeaheadApiName, language } = useAddressFormContext();
   const queryClient = useQueryClient();
+  const handleAutofillRef = useRef<(values: AutofillValues) => Promise<void>>(undefined);
 
-  const handleAutofill = useEffectEvent(async (values: AutofillValues) => {
+  handleAutofillRef.current = async (values: AutofillValues) => {
     if (typeaheadApiName === null) {
       return;
     }
@@ -58,11 +59,11 @@ export const AddressFormAutofillHandler = ({ form }: AddressFormAutofillHandlerP
     // The user filled an address, we can clear the cache without refetching
     queryClient.removeQueries({ queryKey: ["typeahead"] });
     queryClient.removeQueries({ queryKey: ["getPlace"] });
-  });
+  };
 
   useEffect(() => {
-    return detectAutofill(form, handleAutofill);
-  }, [form, handleAutofill]);
+    return detectAutofill(form, (values) => handleAutofillRef.current?.(values));
+  }, [form]);
 
   return null;
 };
