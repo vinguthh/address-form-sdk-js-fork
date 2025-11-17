@@ -204,17 +204,19 @@ Other countries are in Preview, where the `addressLineOne` field displays the co
 
 #### Props
 
-| Property                        | Type                            | Required | Default | Description                                                                                                          |
-| ------------------------------- | ------------------------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
-| `apiKey`                        | `string`                        | Yes      | -       | The Amazon Location Service API key used to authenticate requests                                                    |
-| `region`                        | `string`                        | Yes      | -       | The AWS region where Amazon Location Service is called (e.g., "us-east-1")                                           |
-| `preventDefaultOnSubmit`        | `boolean`                       | No       | `false` | Prevents the default form submission behavior when set to true                                                       |
-| `language`                      | `string`                        | No       | -       | Language code for localized address suggestions (e.g., "en", "es")                                                   |
-| `politicalView`                 | `string`                        | No       | -       | Political view for address results, affecting disputed territories display                                           |
-| `showCurrentCountryResultsOnly` | `boolean`                       | No       | `false` | Limits autofill results to the currently selected country only                                                       |
-| `allowedCountries`              | `string[]`                      | No       | -       | Array of ISO country codes to restrict address suggestions (see [countries.ts](lib/data/countries.ts) for reference) |
-| `placeTypes`                    | `AutocompleteFilterPlaceType[]` | No       | -       | Array of place types to filter results (e.g., "Locality", "PostalCode")                                              |
-| `onSubmit`                      | `(data) => void`                | No       | -       | Callback function triggered on form submission                                                                       |
+| Property                        | Type                            | Required | Default | Description                                                                                                                                                                 |
+| ------------------------------- | ------------------------------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apiKey`                        | `string`                        | Yes      | -       | The Amazon Location Service API key used to authenticate requests                                                                                                           |
+| `region`                        | `string`                        | Yes      | -       | The AWS region where Amazon Location Service is called (e.g., "us-east-1")                                                                                                  |
+| `preventDefaultOnSubmit`        | `boolean`                       | No       | `false` | Prevents the default form submission behavior when set to true                                                                                                              |
+| `language`                      | `string`                        | No       | -       | Language code for localized address suggestions (e.g., "en", "es")                                                                                                          |
+| `politicalView`                 | `string`                        | No       | -       | Political view for address results, affecting disputed territories display                                                                                                  |
+| `showCurrentCountryResultsOnly` | `boolean`                       | No       | `false` | Limits autofill results to the currently selected country only                                                                                                              |
+| `allowedCountries`              | `string[]`                      | No       | -       | Array of ISO country codes to restrict address suggestions (see [countries.ts](lib/data/countries.ts) for reference)                                                        |
+| `placeTypes`                    | `AutocompleteFilterPlaceType[]` | No       | -       | Array of place types to filter results (e.g., "Locality", "PostalCode")                                                                                                     |
+| `initialMapCenter`              | `[number, number]`              | No       | -       | Initial map center as [longitude, latitude] coordinates. If not provided and a single country is specified in `allowedCountries`, the map centers on that country's capital |
+| `initialMapZoom`                | `number`                        | No       | Varies  | Initial map zoom level. Defaults: 10 when `initialMapCenter` is provided, 5 when centering on a single allowed country, 1 otherwise                                         |
+| `onSubmit`                      | `(data) => void`                | No       | -       | Callback function triggered on form submission                                                                                                                              |
 
 #### Form Submission Data
 

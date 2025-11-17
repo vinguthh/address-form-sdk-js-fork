@@ -41,6 +41,8 @@ export interface AddressFormProps extends AddressFormContentProps {
   showCurrentCountryResultsOnly?: boolean;
   allowedCountries?: string[];
   placeTypes?: AutocompleteFilterPlaceType[];
+  initialMapCenter?: [number, number];
+  initialMapZoom?: number;
   onSubmit?: (event: FormEvent & { data: AddressFormData }) => void;
 }
 
@@ -60,6 +62,8 @@ export const AddressForm: FunctionComponent<AddressFormProps> & ChildComponents 
   showCurrentCountryResultsOnly,
   allowedCountries,
   placeTypes,
+  initialMapCenter,
+  initialMapZoom,
   ...contentProps
 }) => {
   return (
@@ -71,6 +75,8 @@ export const AddressForm: FunctionComponent<AddressFormProps> & ChildComponents 
       showCurrentCountryResultsOnly={showCurrentCountryResultsOnly}
       allowedCountries={allowedCountries}
       placeTypes={placeTypes}
+      initialMapCenter={initialMapCenter}
+      initialMapZoom={initialMapZoom}
     >
       <AddressFormContent {...contentProps}>{children}</AddressFormContent>
     </AddressFormProvider>
