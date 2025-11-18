@@ -27,6 +27,8 @@ export interface RenderParams {
   allowedCountries?: string[];
   placeTypes?: AutocompleteFilterPlaceType[];
   onSubmit?: (event: FormEvent & { data: AddressFormData }) => void;
+  initialMapCenter?: [number, number];
+  initialMapZoom?: number;
 }
 
 export const render = ({ root: selector, ...formProps }: RenderParams) => {
@@ -54,6 +56,8 @@ export const render = ({ root: selector, ...formProps }: RenderParams) => {
         showCurrentCountryResultsOnly={formProps.showCurrentCountryResultsOnly}
         allowedCountries={formProps.allowedCountries}
         placeTypes={formProps.placeTypes}
+        initialMapCenter={formProps.initialMapCenter}
+        initialMapZoom={formProps.initialMapZoom}
       >
         <FormEventHandler
           selector={selector}
@@ -74,7 +78,7 @@ export const render = ({ root: selector, ...formProps }: RenderParams) => {
                   label={element.ariaLabel ?? "Address"}
                   placeholder={element.getAttribute("placeholder") ?? "Enter address"}
                   className={element.className || undefined}
-                  apiName={getString(element.dataset, "apiName") ?? "autocomplete"}
+                  apiName={getString(element.dataset, "apiName") ?? "suggest"}
                   showCurrentLocation={getBoolean(element.dataset, "showCurrentLocation") ?? true}
                 />
               ),

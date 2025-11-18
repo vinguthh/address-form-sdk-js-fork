@@ -14,6 +14,7 @@ import { countries } from "../../data/countries.ts";
 
 export interface TypeaheadOutput {
   addressLineOneField?: string;
+  addressLineTwoField?: string;
   fullAddress?: Address;
   position?: [number, number];
 }
@@ -115,6 +116,7 @@ const APITypeahead = ({
 
     onSelect({
       addressLineOneField,
+      addressLineTwoField: result.PlaceType === "PointOfInterest" ? result.Title : undefined,
       fullAddress: result.Address,
       position: result.Position ? [lng, lat] : undefined,
     });
