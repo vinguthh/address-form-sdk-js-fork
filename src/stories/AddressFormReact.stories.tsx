@@ -11,8 +11,9 @@ const meta = {
   tags: ["autodocs"],
   args: {
     // AddressForm Props
-    onSubmit: (event: any) => {
-      action("onSubmit")(event.data);
+    onSubmit: async (getData: any) => {
+      const data = await getData({ intendedUse: "SingleUse" });
+      action("onSubmit")(data);
     },
     apiKey: "AMAZON_LOCATION_API_KEY",
     region: import.meta.env.STORYBOOK_SDK_REGION,
@@ -69,7 +70,7 @@ const meta = {
     },
     onSubmit: {
       type: "function",
-      description: "Callback function triggered on form submission",
+      description: "Callback function that receives a getData async function for retrieving form data with intendedUse parameter",
       table: {
         category: "AddressForm",
       },

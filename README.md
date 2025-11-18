@@ -30,19 +30,19 @@ Install the SDK in your React app by running: `npm install @aws/address-form-sdk
 
 Include the following in your HTML code the CSS and JavaScript for the SDK
 
-```
+```html
 ...
 <head>
-...
+  ...
   <link
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js/dist/standalone/address-form-sdk.css"
   />
-...
+  ...
 </head>
 ...
 <body>
-...
+  ...
   <script src="https://cdn.jsdelivr.net/npm/@aws/address-form-sdk-js/dist/standalone/address-form-sdk.umd.js"></script>
 </body>
 ...
@@ -50,12 +50,12 @@ Include the following in your HTML code the CSS and JavaScript for the SDK
 
 ### Use SDK
 
-Implement the following code into your React app. Replace the `AMAZON_LOCATION_API_KEY` value with your API key and `AMAZON_LOCATION_REGION` with the region of the API key. The data returned when the form is submitted is returned from `onSubmit`
+Implement the following code into your React app. Replace the `AMAZON_LOCATION_API_KEY` value with your API key and `AMAZON_LOCATION_REGION` with the region of the API key.
 
 #### React
 
-```
-import React from 'react';
+```jsx
+import React from "react";
 import { AddressForm, Flex } from "@aws/address-form-sdk-js";
 
 export default function App() {
@@ -63,14 +63,15 @@ export default function App() {
     <AddressForm
       apiKey="AMAZON_LOCATION_API_KEY"
       region="AMAZON_LOCATION_REGION"
-      onSubmit={(data) => {
+      onSubmit={async (getData) => {
+        // Get form data with intendedUse parameter
+        // Use "Storage" if you plan to store/cache the results
+        // Use "SingleUse" for one-time display only
+        const data = await getData({ intendedUse: "SingleUse" });
         console.log(data);
       }}
     >
-      <Flex
-        direction="row"
-        flex
-      >
+      <Flex direction="row" flex>
         <Flex direction="column">
           <input
             data-api-name="autocomplete"
@@ -78,29 +79,11 @@ export default function App() {
             name="addressLineOne"
             placeholder="Enter address"
           />
-          <input
-            data-type="address-form"
-            name="addressLineTwo"
-          />
-          <input
-            data-type="address-form"
-            name="city"
-            placeholder="City"
-          />
-          <input
-            data-type="address-form"
-            name="province"
-            placeholder="State/Province"
-          />
-          <input
-            data-type="address-form"
-            name="postalCode"
-          />
-          <input
-            data-type="address-form"
-            name="country"
-            placeholder="Country"
-          />
+          <input data-type="address-form" name="addressLineTwo" />
+          <input data-type="address-form" name="city" placeholder="City" />
+          <input data-type="address-form" name="province" placeholder="State/Province" />
+          <input data-type="address-form" name="postalCode" />
+          <input data-type="address-form" name="country" placeholder="Country" />
           <Flex direction="row">
             <button data-type="address-form" type="submit">
               Submit
@@ -110,12 +93,7 @@ export default function App() {
             </button>
           </Flex>
         </Flex>
-        <AddressFormMap
-          mapStyle={[
-            'Standard',
-            'Light'
-          ]}
-         />
+        <AddressFormMap mapStyle={["Standard", "Light"]} />
       </Flex>
     </AddressForm>
   );
@@ -124,7 +102,7 @@ export default function App() {
 
 #### HTML/JavaScript
 
-```
+```html
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -136,10 +114,7 @@ export default function App() {
     />
   </head>
   <body>
-    <form
-      id="amazon-location-address-form"
-      class="aws-address-form aws-flex-row aws-flex-1"
-    >
+    <form id="amazon-location-address-form" class="aws-address-form aws-flex-row aws-flex-1">
       <div class="aws-flex-column">
         <input
           data-type="address-form"
@@ -166,7 +141,13 @@ export default function App() {
         apiKey: "AMAZON_LOCATION_API_KEY",
         region: "AMAZON_LOCATION_REGION",
         showCurrentCountryResultsOnly: true,
-        onSubmit: (e) => console.log(e.data),
+        onSubmit: async (getData) => {
+          // Get form data with intendedUse parameter
+          // Use "Storage" if you plan to store/cache the results
+          // Use "SingleUse" for one-time display only
+          const data = await getData({ intendedUse: "SingleUse" });
+          console.log(data);
+        },
       });
     </script>
   </body>
@@ -208,7 +189,6 @@ Other countries are in Preview, where the `addressLineOne` field displays the co
 | ------------------------------- | ------------------------------- | -------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `apiKey`                        | `string`                        | Yes      | -       | The Amazon Location Service API key used to authenticate requests                                                                                                           |
 | `region`                        | `string`                        | Yes      | -       | The AWS region where Amazon Location Service is called (e.g., "us-east-1")                                                                                                  |
-| `preventDefaultOnSubmit`        | `boolean`                       | No       | `false` | Prevents the default form submission behavior when set to true                                                                                                              |
 | `language`                      | `string`                        | No       | -       | Language code for localized address suggestions (e.g., "en", "es")                                                                                                          |
 | `politicalView`                 | `string`                        | No       | -       | Political view for address results, affecting disputed territories display                                                                                                  |
 | `showCurrentCountryResultsOnly` | `boolean`                       | No       | `false` | Limits autofill results to the currently selected country only                                                                                                              |
@@ -216,23 +196,36 @@ Other countries are in Preview, where the `addressLineOne` field displays the co
 | `placeTypes`                    | `AutocompleteFilterPlaceType[]` | No       | -       | Array of place types to filter results (e.g., "Locality", "PostalCode")                                                                                                     |
 | `initialMapCenter`              | `[number, number]`              | No       | -       | Initial map center as [longitude, latitude] coordinates. If not provided and a single country is specified in `allowedCountries`, the map centers on that country's capital |
 | `initialMapZoom`                | `number`                        | No       | Varies  | Initial map zoom level. Defaults: 10 when `initialMapCenter` is provided, 5 when centering on a single allowed country, 1 otherwise                                         |
-| `onSubmit`                      | `(data) => void`                | No       | -       | Callback function triggered on form submission                                                                                                                              |
+| `onSubmit`                      | `(getData) => void`             | No       | -       | Callback function that receives a getData async function for retrieving form data with intendedUse parameter                                                                |
 
 #### Form Submission Data
 
-When the form is submitted, the `onSubmit` callback receives a data object containing the following properties:
+When the form is submitted, the `onSubmit` callback receives a `getData` async function. Call this function with an `intendedUse` parameter to retrieve the form data:
 
-| Property           | Type      | Description                                                                                 |
-| ------------------ | --------- | ------------------------------------------------------------------------------------------- |
-| `addressLineOne`   | `string`  | Primary address line (street address)                                                       |
-| `addressLineTwo`   | `string`  | Secondary address line (apartment, suite, etc.)                                             |
-| `city`             | `string`  | City name                                                                                   |
-| `province`         | `string`  | State or province                                                                           |
-| `postalCode`       | `string`  | Postal or ZIP code                                                                          |
-| `country`          | `string`  | Country code (ISO 3166-1 alpha-2)                                                           |
-| `originalPosition` | `string`  | Original coordinates from API response (longitude,latitude)                                 |
-| `adjustedPosition` | `string`  | User-adjusted coordinates if map pin was moved (longitude,latitude)                         |
-| `addressDetails`   | `Address` | Complete address object from Amazon Location Service API (GetPlace/ReverseGeocode response) |
+```javascript
+onSubmit: async (getData) => {
+  const data = await getData({
+    intendedUse: "SingleUse", // or "Storage"
+  });
+};
+```
+
+**Important:** Use `"Storage"` if you plan to store or cache the results. This ensures compliance with Amazon Location Service [intended use requirements](https://docs.aws.amazon.com/location/latest/developerguide/places-intended-use.html).
+
+The returned data object contains the following properties:
+
+| Property           | Type      | Description                                                                                                    |
+| ------------------ | --------- | -------------------------------------------------------------------------------------------------------------- |
+| `placeId`          | `string`  | Place ID from Amazon Location Service (only present when address was selected from typeahead or locate button) |
+| `addressLineOne`   | `string`  | Primary address line (street address)                                                                          |
+| `addressLineTwo`   | `string`  | Secondary address line (apartment, suite, etc.)                                                                |
+| `city`             | `string`  | City name                                                                                                      |
+| `province`         | `string`  | State or province                                                                                              |
+| `postalCode`       | `string`  | Postal or ZIP code                                                                                             |
+| `country`          | `string`  | Country code (ISO 3166-1 alpha-2)                                                                              |
+| `originalPosition` | `string`  | Original coordinates from API response (longitude,latitude)                                                    |
+| `adjustedPosition` | `string`  | User-adjusted coordinates if map pin was moved (longitude,latitude)                                            |
+| `addressDetails`   | `Address` | Complete address object from Amazon Location Service API (GetPlace/ReverseGeocode response)                    |
 
 **Note:** The `addressDetails` property contains the full API response from Amazon Location Service and is only present when the address was populated through our APIs (typeahead selection or locate button). Addresses entered manually by users will not contain this property.
 
