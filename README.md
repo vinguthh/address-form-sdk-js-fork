@@ -65,8 +65,8 @@ export default function App() {
       region="AMAZON_LOCATION_REGION"
       onSubmit={async (getData) => {
         // Get form data with intendedUse parameter
-        // Use "Storage" if you plan to store/cache the results
         // Use "SingleUse" for one-time display only
+        // Use "Storage" if you plan to store/cache the results - makes an extra API call to grant storage rights
         const data = await getData({ intendedUse: "SingleUse" });
         console.log(data);
       }}
@@ -143,8 +143,8 @@ export default function App() {
         showCurrentCountryResultsOnly: true,
         onSubmit: async (getData) => {
           // Get form data with intendedUse parameter
-          // Use "Storage" if you plan to store/cache the results
           // Use "SingleUse" for one-time display only
+          // Use "Storage" if you plan to store/cache the results - makes an extra API call to grant storage rights
           const data = await getData({ intendedUse: "SingleUse" });
           console.log(data);
         },
