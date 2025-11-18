@@ -68,7 +68,7 @@ const APITypeahead = ({
   // Clear typeahead cache on map view change to avoid displaying stale results
   useEffect(() => {
     if (currentBiasPosition) {
-      skipNextQueryRef.current = true; // Disables API calls
+      skipNextQueryRef.current = true; // Prevents API call bursts on map view changes by disabling the active query
       queryClient.invalidateQueries({ queryKey: ["typeahead"] });
     }
   }, [currentBiasPosition, queryClient]);
