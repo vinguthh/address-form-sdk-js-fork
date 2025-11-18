@@ -1,32 +1,33 @@
-import { AutocompleteFilterPlaceType } from "@aws-sdk/client-geo-places";
-import { FormEvent, FunctionComponent, useEffect } from "react";
+import { AutocompleteFilterPlaceType, GetPlaceIntendedUse } from "@aws-sdk/client-geo-places";
+import { FunctionComponent, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import type { AddressFormData } from "./AddressForm";
+import useAmazonLocationContext from "../../hooks/use-amazon-location-context";
+import { getPlace } from "../../utils/api";
 import { AmazonLocationProvider } from "../AmazonLocationProvider";
+import { Button } from "../Button";
 import { ComponentInjector } from "../ComponentInjector";
+import { ColorScheme, MapStyle, MapStyleType } from "../Map";
+import type { SubmitHandler } from "./AddressForm";
 import { AddressFormAddressField } from "./AddressFormAddressField";
 import { AddressFormAutofillHandler } from "./AddressFormAutofillHandler";
+import { useAddressFormContext } from "./AddressFormContext";
 import { AddressFormCountryField } from "./AddressFormCountryField";
 import { Field } from "./AddressFormFields";
+import { AddressFormMap } from "./AddressFormMap";
 import { AddressFormProvider } from "./AddressFormProvider";
 import { AddressFormTextField } from "./AddressFormTextField";
-import { useAddressFormContext } from "./AddressFormContext";
 import { getBoolean, getString } from "./utils";
-import { Button } from "../Button";
-import { AddressFormMap } from "./AddressFormMap";
-import { MapStyle, MapStyleType, ColorScheme } from "../Map";
 
 export interface RenderParams {
   root: string;
   apiKey: string;
   region: string;
-  preventDefaultOnSubmit?: boolean;
   language?: string;
   politicalView?: string;
   showCurrentCountryResultsOnly?: boolean;
   allowedCountries?: string[];
   placeTypes?: AutocompleteFilterPlaceType[];
-  onSubmit?: (event: FormEvent & { data: AddressFormData }) => void;
+  onSubmit?: SubmitHandler;
   initialMapCenter?: [number, number];
   initialMapZoom?: number;
 }
@@ -59,12 +60,7 @@ export const render = ({ root: selector, ...formProps }: RenderParams) => {
         initialMapCenter={formProps.initialMapCenter}
         initialMapZoom={formProps.initialMapZoom}
       >
-        <FormEventHandler
-          selector={selector}
-          onSubmit={formProps.onSubmit}
-          preventDefaultOnSubmit={formProps.preventDefaultOnSubmit}
-        />
-
+        <FormEventHandler selector={selector} onSubmit={formProps.onSubmit} />
         <AddressFormAutofillHandler form={form} />
 
         <ComponentInjector
@@ -174,23 +170,28 @@ export const render = ({ root: selector, ...formProps }: RenderParams) => {
 // eslint-disable-next-line react-refresh/only-export-components
 const FormEventHandler: FunctionComponent<{
   selector: string;
-  onSubmit?: (event: FormEvent & { data: AddressFormData }) => void;
-  preventDefaultOnSubmit?: boolean;
-}> = ({ selector, onSubmit, preventDefaultOnSubmit = true }) => {
+  onSubmit?: SubmitHandler;
+}> = ({ selector, onSubmit }) => {
   const { data, setData, resetData } = useAddressFormContext();
+  const { client } = useAmazonLocationContext();
 
   useEffect(() => {
     const form = document.querySelector(selector) as HTMLFormElement;
     if (!form) return;
 
     const handleSubmit = (event: Event) => {
-      if (preventDefaultOnSubmit) {
-        event.preventDefault();
-      }
+      event.preventDefault();
 
-      if (onSubmit) {
-        onSubmit(Object.assign(event as unknown as FormEvent, { data }));
-      }
+      onSubmit?.(async ({ intendedUse }) => {
+        // If the user is going to store the results (even for caching purposes),
+        // we must make another API call for the same place with the storage option.
+        // See: https://docs.aws.amazon.com/location/latest/developerguide/places-intended-use.html
+        if (intendedUse === GetPlaceIntendedUse.STORAGE && data.placeId) {
+          await getPlace(client, { PlaceId: data.placeId, IntendedUse: intendedUse });
+        }
+
+        return data;
+      });
     };
 
     const handleReset = () => {
@@ -204,7 +205,7 @@ const FormEventHandler: FunctionComponent<{
       form.removeEventListener("submit", handleSubmit);
       form.removeEventListener("reset", handleReset);
     };
-  }, [selector, data, setData, resetData, onSubmit, preventDefaultOnSubmit]);
+  }, [selector, data, setData, resetData, onSubmit, client]);
 
   return null;
 };

@@ -1,15 +1,6 @@
-import { Address, AutocompleteFilterPlaceType } from "@aws-sdk/client-geo-places";
+import { Address, AutocompleteFilterPlaceType, GetPlaceIntendedUse } from "@aws-sdk/client-geo-places";
 import clsx from "clsx";
-import {
-  ComponentProps,
-  FormEvent,
-  FormEventHandler,
-  FunctionComponent,
-  ReactNode,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { ComponentProps, FormEventHandler, FunctionComponent, ReactNode, useEffect, useRef, useState } from "react";
 import { AddressFormAddressField, AddressFormAddressFieldProps } from "./AddressFormAddressField";
 import { AddressFormAutofillHandler } from "./AddressFormAutofillHandler";
 import { useAddressFormContext } from "./AddressFormContext";
@@ -19,8 +10,11 @@ import { AddressFormMap, AddressFormMapProps } from "./AddressFormMap";
 import { AddressFormProvider } from "./AddressFormProvider";
 import { AddressFormTextField, AddressFormTextFieldProps } from "./AddressFormTextField";
 import * as styles from "./styles.css";
+import useAmazonLocationContext from "../../hooks/use-amazon-location-context";
+import { getPlace } from "../../utils/api";
 
 export interface AddressFormData {
+  placeId?: string;
   addressLineOne?: string;
   addressLineTwo?: string;
   city?: string;
@@ -35,7 +29,6 @@ export interface AddressFormData {
 export interface AddressFormProps extends AddressFormContentProps {
   apiKey: string;
   region: string;
-  preventDefaultOnSubmit?: boolean;
   language?: string;
   politicalView?: string;
   showCurrentCountryResultsOnly?: boolean;
@@ -43,7 +36,6 @@ export interface AddressFormProps extends AddressFormContentProps {
   placeTypes?: AutocompleteFilterPlaceType[];
   initialMapCenter?: [number, number];
   initialMapZoom?: number;
-  onSubmit?: (event: FormEvent & { data: AddressFormData }) => void;
 }
 
 interface ChildComponents {
@@ -83,21 +75,19 @@ export const AddressForm: FunctionComponent<AddressFormProps> & ChildComponents 
   );
 };
 
+export type SubmitHandler = (
+  getData: (options: { intendedUse: GetPlaceIntendedUse }) => Promise<AddressFormData>,
+) => void;
+
 interface AddressFormContentProps extends Omit<ComponentProps<"form">, "onSubmit"> {
-  preventDefaultOnSubmit?: boolean;
-  onSubmit?: (event: FormEvent & { data: AddressFormData }) => void;
+  onSubmit?: SubmitHandler;
   className?: string;
   children: ReactNode;
 }
 
-const AddressFormContent: FunctionComponent<AddressFormContentProps> = ({
-  children,
-  className,
-  onSubmit,
-  preventDefaultOnSubmit = true,
-  ...rest
-}) => {
+const AddressFormContent: FunctionComponent<AddressFormContentProps> = ({ children, className, onSubmit, ...rest }) => {
   const { data, resetData } = useAddressFormContext();
+  const { client } = useAmazonLocationContext();
   const formRef = useRef<HTMLFormElement>(null);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -106,11 +96,18 @@ const AddressFormContent: FunctionComponent<AddressFormContentProps> = ({
   }, []);
 
   const handleSubmit: FormEventHandler = (event) => {
-    if (preventDefaultOnSubmit) {
-      event.preventDefault();
-    }
+    event.preventDefault();
 
-    onSubmit?.({ ...event, data: data });
+    onSubmit?.(async ({ intendedUse }) => {
+      // If the user is going to store the results (even for caching purposes),
+      // we must make another API call for the same place with the storage option.
+      // See: https://docs.aws.amazon.com/location/latest/developerguide/places-intended-use.html
+      if (intendedUse === GetPlaceIntendedUse.STORAGE && data.placeId) {
+        await getPlace(client, { PlaceId: data.placeId, IntendedUse: intendedUse });
+      }
+
+      return data;
+    });
   };
 
   return (

@@ -39,6 +39,7 @@ export function LocateButton({ onLocate, className = "", ...restProps }: LocateB
           const formattedAddressLineOne = addressNumber && street ? `${addressNumber} ${street}` : "";
 
           onLocate({
+            placeId: result.ResultItems[0].PlaceId,
             addressLineOneField: formattedAddressLineOne,
             fullAddress: result.ResultItems[0].Address,
             position: result.ResultItems[0].Position as [number, number],

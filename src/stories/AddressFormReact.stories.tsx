@@ -16,7 +16,6 @@ const meta = {
     },
     apiKey: "AMAZON_LOCATION_API_KEY",
     region: import.meta.env.STORYBOOK_SDK_REGION,
-    preventDefaultOnSubmit: true,
     language: undefined,
     politicalView: undefined,
     showCurrentCountryResultsOnly: false,
@@ -73,15 +72,6 @@ const meta = {
       description: "Callback function triggered on form submission",
       table: {
         category: "AddressForm",
-      },
-    },
-    preventDefaultOnSubmit: {
-      type: "boolean",
-      control: "boolean",
-      description: "Prevents the default form submission behavior when set to true",
-      table: {
-        category: "AddressForm",
-        defaultValue: { summary: "true" },
       },
     },
     language: {
@@ -359,7 +349,6 @@ export const Default: Story = {
         apiKey={args.apiKey === "AMAZON_LOCATION_API_KEY" ? import.meta.env.STORYBOOK_SDK_API_KEY : args.apiKey}
         region={args.region}
         onSubmit={args.onSubmit}
-        preventDefaultOnSubmit={args.preventDefaultOnSubmit}
         language={args.language}
         politicalView={args.politicalView}
         showCurrentCountryResultsOnly={args.showCurrentCountryResultsOnly}
