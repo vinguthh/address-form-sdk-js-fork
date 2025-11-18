@@ -1,1 +1,1 @@
-export { AddressForm, type AddressFormData } from "./AddressForm";
+export { AddressForm, type AddressFormData, type SubmitHandler } from "./AddressForm";
