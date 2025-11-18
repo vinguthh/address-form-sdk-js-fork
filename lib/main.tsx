@@ -1,5 +1,5 @@
 // Components
-export { AddressForm, type AddressFormData } from "./components/AddressFormReact";
+export { AddressForm, type AddressFormData, type SubmitHandler } from "./components/AddressFormReact";
 export { AmazonLocationProvider } from "./components/AmazonLocationProvider";
 export { Button } from "./components/Button";
 export { CountrySelect, type CountrySelectProps } from "./components/CountrySelect";
