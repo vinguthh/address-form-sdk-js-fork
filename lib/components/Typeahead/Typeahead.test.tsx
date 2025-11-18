@@ -559,4 +559,64 @@ describe("Typeahead Component", () => {
     // Verify no autocomplete calls after using locate button
     expect(api.autocomplete).not.toHaveBeenCalled();
   });
+
+  it("should populate addressLineTwoField with POI name when PlaceType is PointOfInterest", async () => {
+    let currentValue = "";
+    const mockOnChange = vi.fn((newValue: string) => {
+      currentValue = newValue;
+    });
+    const mockOnSelect = vi.fn();
+
+    vi.mocked(api.autocomplete).mockResolvedValue({
+      ResultItems: [
+        {
+          PlaceId: "poi-1",
+          Title: "Starbucks Coffee",
+          Address: { Label: "Starbucks Coffee, 123 Main St" },
+          PlaceType: "PointOfInterest",
+        },
+      ],
+      PricingBucket: "bucket1",
+      $metadata: {},
+    });
+
+    const mockPoiResult: GetPlaceCommandOutput = {
+      PlaceId: "poi-1",
+      PlaceType: "PointOfInterest",
+      Title: "Starbucks Coffee",
+      PricingBucket: "mock-pricing-bucket",
+      Address: { AddressNumber: "123", Street: "Main St", Label: "123 Main St" },
+      Position: [-122.4, 37.8],
+      $metadata: {},
+    };
+
+    vi.mocked(api.getPlace).mockResolvedValue(mockPoiResult);
+
+    const TestComponent = () => (
+      <Typeahead apiName="autocomplete" value={currentValue} onChange={mockOnChange} onSelect={mockOnSelect} />
+    );
+
+    const { rerender } = renderWithProvider(<TestComponent />);
+    const input = screen.getByRole("combobox");
+
+    fireEvent.change(input, { target: { value: "starbucks" } });
+    currentValue = "starbucks";
+    rerender(<TestComponent />);
+
+    await waitFor(() => {
+      expect(screen.getByText("Starbucks Coffee, 123 Main St")).toBeInTheDocument();
+    });
+
+    const selectedOption = screen.getByRole("option", { name: "Starbucks Coffee, 123 Main St" });
+    await userEvent.click(selectedOption);
+
+    await waitFor(() => {
+      expect(mockOnSelect).toHaveBeenCalledWith({
+        addressLineOneField: "123 Main St",
+        addressLineTwoField: "Starbucks Coffee",
+        fullAddress: mockPoiResult.Address,
+        position: [-122.4, 37.8],
+      });
+    });
+  });
 });

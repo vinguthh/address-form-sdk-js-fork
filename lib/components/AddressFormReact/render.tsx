@@ -78,7 +78,7 @@ export const render = ({ root: selector, ...formProps }: RenderParams) => {
                   label={element.ariaLabel ?? "Address"}
                   placeholder={element.getAttribute("placeholder") ?? "Enter address"}
                   className={element.className || undefined}
-                  apiName={getString(element.dataset, "apiName") ?? "autocomplete"}
+                  apiName={getString(element.dataset, "apiName") ?? "suggest"}
                   showCurrentLocation={getBoolean(element.dataset, "showCurrentLocation") ?? true}
                 />
               ),

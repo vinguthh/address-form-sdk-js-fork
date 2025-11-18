@@ -15,7 +15,7 @@ const meta = {
       action("onSubmit")(event.data);
     },
     apiKey: "AMAZON_LOCATION_API_KEY",
-    region: "AMAZON_LOCATION_REGION",
+    region: import.meta.env.STORYBOOK_SDK_REGION,
     preventDefaultOnSubmit: true,
     language: undefined,
     politicalView: undefined,
@@ -30,7 +30,7 @@ const meta = {
     addressLineOnePlaceholder: "Enter address",
     addressLineOneLabel: "Address",
     addressLineOneClassName: undefined,
-    addressLineOneApiName: "autocomplete",
+    addressLineOneApiName: "suggest",
     addressLineOneShowCurrentLocation: "true",
     // Address Line Two Input Props
     addressLineTwoPlaceholder: "Apartment, suite, etc.",
@@ -356,7 +356,7 @@ export const Default: Story = {
   render: (args: any) => {
     return (
       <AddressForm
-        apiKey={args.apiKey}
+        apiKey={args.apiKey === "AMAZON_LOCATION_API_KEY" ? import.meta.env.STORYBOOK_SDK_API_KEY : args.apiKey}
         region={args.region}
         onSubmit={args.onSubmit}
         preventDefaultOnSubmit={args.preventDefaultOnSubmit}
