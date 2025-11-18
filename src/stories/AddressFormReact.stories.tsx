@@ -70,7 +70,8 @@ const meta = {
     },
     onSubmit: {
       type: "function",
-      description: "Callback function that receives a getData async function for retrieving form data with intendedUse parameter",
+      description:
+        "Callback function that receives a getData async function for retrieving form data with intendedUse parameter",
       table: {
         category: "AddressForm",
       },
