@@ -58,6 +58,7 @@ const APITypeahead = ({
   const queryClient = useQueryClient();
   const isValid = debouncedValue.length >= 2;
   const skipNextQueryRef = useRef(false);
+  const currentBiasPosition = apiInput?.BiasPosition?.join(","); // Used for tracking map view changes
 
   useEffect(() => {
     if (skipNextQuery !== undefined) {
@@ -65,12 +66,30 @@ const APITypeahead = ({
     }
   }, [skipNextQueryRef, skipNextQuery]);
 
+  // Clear typeahead cache on map view change to avoid displaying stale results
+  useEffect(() => {
+    if (currentBiasPosition) {
+      skipNextQueryRef.current = true; // Prevents API call bursts on map view changes by disabling the active query
+      queryClient.invalidateQueries({ queryKey: ["typeahead"] });
+    }
+  }, [currentBiasPosition, queryClient]);
+
   const { data = [], isLoading } = useTypeaheadQuery({
     client,
     apiName,
     apiInput: { QueryText: debouncedValue, MaxResults: 5, ...apiInput },
     enabled: isValid && !skipNextQueryRef.current,
   });
+
+  /**
+   * Handles input value changes and controls typeahead query execution
+   * @param value - The new input value
+   * @param silent - When true, skips typeahead API calls (used for programmatic updates)
+   */
+  const handleChange = (value: string, silent = false) => {
+    skipNextQueryRef.current = silent;
+    onChange(value);
+  };
 
   const handleAddressSelect = async (address: TypeaheadResultItem | null) => {
     if (!address) {
@@ -94,16 +113,12 @@ const APITypeahead = ({
       ? [result.Address?.AddressNumber, result.Address?.Street].filter(Boolean).join(" ") || addressLineOneFallback
       : addressLineOneFallback;
 
-    const addressLineTwoField = result.PlaceType === "PointOfInterest" ? result.Title : undefined;
-
-    skipNextQueryRef.current = true;
-
-    onChange(addressLineOneField);
+    handleChange(addressLineOneField, true);
 
     onSelect({
       placeId: result.PlaceId,
       addressLineOneField,
-      addressLineTwoField,
+      addressLineTwoField: result.PlaceType === "PointOfInterest" ? result.Title : undefined,
       fullAddress: result.Address,
       position: result.Position ? [lng, lat] : undefined,
     });
@@ -122,8 +137,7 @@ const APITypeahead = ({
   }, [value]);
 
   const handleCurrentLocation = (address: TypeaheadOutput) => {
-    skipNextQueryRef.current = true;
-    onChange(address.addressLineOneField ?? "");
+    handleChange(address.addressLineOneField ?? "", true);
     onSelect(address);
   };
 
@@ -144,10 +158,7 @@ const APITypeahead = ({
           name={name}
           placeholder={placeholder}
           value={value}
-          onChange={(event) => {
-            skipNextQueryRef.current = false;
-            onChange(event.target.value);
-          }}
+          onChange={(event) => handleChange(event.target.value)}
           className={input}
           autoComplete="off"
         />
