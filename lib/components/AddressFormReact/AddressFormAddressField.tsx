@@ -28,6 +28,7 @@ export const AddressFormAddressField = memo(
 
     const handleTypeaheadSelect = (value: TypeaheadOutput) => {
       context.setData({
+        placeId: value.placeId,
         addressLineOne: value.addressLineOneField,
         addressLineTwo: value.addressLineTwoField,
         city: value.fullAddress?.Locality,

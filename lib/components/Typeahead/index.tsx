@@ -13,6 +13,7 @@ import { TypeaheadAPIInput, TypeaheadAPIName, TypeaheadResultItem, useTypeaheadQ
 import { countries } from "../../data/countries.ts";
 
 export interface TypeaheadOutput {
+  placeId?: string;
   addressLineOneField?: string;
   addressLineTwoField?: string;
   fullAddress?: Address;
@@ -100,6 +101,7 @@ const APITypeahead = ({
     onChange(addressLineOneField);
 
     onSelect({
+      placeId: result.PlaceId,
       addressLineOneField,
       addressLineTwoField,
       fullAddress: result.Address,

@@ -34,7 +34,10 @@
         root: "#amazon-location-address-form",
         apiKey: import.meta.env.VITE_APP_API_KEY,
         region: import.meta.env.VITE_APP_REGION,
-        onSubmit: (e) => console.log(e.data),
+        onSubmit: async (getData) => {
+          const data = await getData({ intendedUse: "SingleUse" });
+          console.log(data);
+        },
       });
     </script>
   </body>

@@ -193,7 +193,9 @@ describe("Typeahead Component", () => {
         },
       );
       expect(mockOnSelect).toHaveBeenCalledWith({
+        placeId: "mock-place-id",
         addressLineOneField: "123 Mock St",
+        addressLineTwoField: undefined,
         fullAddress: {
           AddressNumber: "123",
           Street: "Mock St",
@@ -612,6 +614,7 @@ describe("Typeahead Component", () => {
 
     await waitFor(() => {
       expect(mockOnSelect).toHaveBeenCalledWith({
+        placeId: "poi-1",
         addressLineOneField: "123 Main St",
         addressLineTwoField: "Starbucks Coffee",
         fullAddress: mockPoiResult.Address,

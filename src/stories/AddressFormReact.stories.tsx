@@ -11,12 +11,12 @@ const meta = {
   tags: ["autodocs"],
   args: {
     // AddressForm Props
-    onSubmit: (event: any) => {
-      action("onSubmit")(event.data);
+    onSubmit: async (getData: any) => {
+      const data = await getData({ intendedUse: "SingleUse" });
+      action("onSubmit")(data);
     },
     apiKey: "AMAZON_LOCATION_API_KEY",
     region: import.meta.env.STORYBOOK_SDK_REGION,
-    preventDefaultOnSubmit: true,
     language: undefined,
     politicalView: undefined,
     showCurrentCountryResultsOnly: false,
@@ -70,18 +70,10 @@ const meta = {
     },
     onSubmit: {
       type: "function",
-      description: "Callback function triggered on form submission",
+      description:
+        "Callback function that receives a getData async function for retrieving form data with intendedUse parameter",
       table: {
         category: "AddressForm",
-      },
-    },
-    preventDefaultOnSubmit: {
-      type: "boolean",
-      control: "boolean",
-      description: "Prevents the default form submission behavior when set to true",
-      table: {
-        category: "AddressForm",
-        defaultValue: { summary: "true" },
       },
     },
     language: {
@@ -359,7 +351,6 @@ export const Default: Story = {
         apiKey={args.apiKey === "AMAZON_LOCATION_API_KEY" ? import.meta.env.STORYBOOK_SDK_API_KEY : args.apiKey}
         region={args.region}
         onSubmit={args.onSubmit}
-        preventDefaultOnSubmit={args.preventDefaultOnSubmit}
         language={args.language}
         politicalView={args.politicalView}
         showCurrentCountryResultsOnly={args.showCurrentCountryResultsOnly}

@@ -1,9 +1,16 @@
-import { fireEvent } from "@testing-library/react";
-import { useContext } from "react";
+import { fireEvent, waitFor } from "@testing-library/react";
+import { useContext, useEffect } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { renderWithProvider } from "../../test/utils";
 import { AddressForm } from "./AddressForm";
-import { AddressFormContext, AddressFormContextType } from "./AddressFormContext";
+import { AddressFormContext, AddressFormContextType, useAddressFormContext } from "./AddressFormContext";
+import { GeoPlacesClient, GetPlaceIntendedUse } from "@aws-sdk/client-geo-places";
+import * as api from "../../utils/api";
+
+vi.mock("../../utils/api", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../../utils/api")>();
+  return { ...actual, getPlace: vi.fn() };
+});
 
 const mockContextValue: AddressFormContextType = {
   apiKey: "test-key",
@@ -104,5 +111,83 @@ describe("AddressForm", () => {
     expect(city).toHaveValue("");
     expect(province).toHaveValue("");
     expect(postalCode).toHaveValue("");
+  });
+
+  it("calls getPlace with STORAGE intendedUse when getData is called with STORAGE", async () => {
+    const mockOnSubmit = vi.fn();
+
+    const TestForm = () => {
+      const { setData } = useAddressFormContext();
+
+      useEffect(() => {
+        setData({ placeId: "test-place-id" });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+
+      return (
+        <button data-type="address-form" type="submit">
+          Submit
+        </button>
+      );
+    };
+
+    const { getByRole } = renderWithProvider(
+      <AddressForm apiKey="test" region="us-east-1" onSubmit={mockOnSubmit}>
+        <TestForm />
+      </AddressForm>,
+    );
+
+    fireEvent.click(getByRole("button", { name: "Submit" }));
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalled();
+    });
+
+    const getData = mockOnSubmit.mock.calls[0][0];
+    const data = await getData({ intendedUse: GetPlaceIntendedUse.STORAGE });
+
+    expect(data).toEqual({ placeId: "test-place-id" });
+    expect(api.getPlace).toHaveBeenCalledWith(expect.any(GeoPlacesClient), {
+      PlaceId: "test-place-id",
+      IntendedUse: GetPlaceIntendedUse.STORAGE,
+    });
+  });
+
+  it("does not call getPlace when getData is called without STORAGE intendedUse", async () => {
+    vi.clearAllMocks();
+    const mockOnSubmit = vi.fn();
+
+    const TestForm = () => {
+      const { setData } = useAddressFormContext();
+
+      useEffect(() => {
+        setData({ placeId: "test-place-id" });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+
+      return (
+        <button data-type="address-form" type="submit">
+          Submit
+        </button>
+      );
+    };
+
+    const { getByRole } = renderWithProvider(
+      <AddressForm apiKey="test" region="us-east-1" onSubmit={mockOnSubmit}>
+        <TestForm />
+      </AddressForm>,
+    );
+
+    fireEvent.click(getByRole("button", { name: "Submit" }));
+
+    await waitFor(() => {
+      expect(mockOnSubmit).toHaveBeenCalled();
+    });
+
+    const getData = mockOnSubmit.mock.calls[0][0];
+    const data = await getData({ intendedUse: GetPlaceIntendedUse.SINGLE_USE });
+
+    expect(data).toEqual({ placeId: "test-place-id" });
+    expect(api.getPlace).not.toHaveBeenCalled();
   });
 });
