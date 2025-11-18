@@ -559,4 +559,47 @@ describe("Typeahead Component", () => {
     // Verify no autocomplete calls after using locate button
     expect(api.autocomplete).not.toHaveBeenCalled();
   });
+
+  it("should invalidate cache when BiasPosition changes", async () => {
+    const TestComponent = ({ biasPosition }: { biasPosition?: [number, number] }) => {
+      const [value, setValue] = useState("");
+
+      return (
+        <Typeahead
+          apiName="suggest"
+          value={value}
+          onChange={setValue}
+          onSelect={vi.fn()}
+          apiInput={{ BiasPosition: biasPosition }}
+        />
+      );
+    };
+
+    const { rerender } = renderWithProvider(<TestComponent biasPosition={[0, 0]} />);
+    const input = screen.getByRole("combobox");
+
+    // Type initial query
+    await act(async () => {
+      fireEvent.change(input, { target: { value: "starbucks" } });
+    });
+
+    await waitFor(() => {
+      expect(api.suggest).toHaveBeenCalledTimes(1);
+    });
+
+    // Change BiasPosition (map moved)
+    await act(async () => {
+      rerender(<TestComponent biasPosition={[-122.4, 37.8]} />);
+    });
+
+    // Type same query again
+    await act(async () => {
+      fireEvent.change(input, { target: { value: "" } });
+      fireEvent.change(input, { target: { value: "starbucks" } });
+    });
+
+    await waitFor(() => {
+      expect(api.suggest).toHaveBeenCalledTimes(2);
+    });
+  });
 });
